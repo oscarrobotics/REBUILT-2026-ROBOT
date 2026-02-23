@@ -52,14 +52,7 @@ public class Feeder extends SubsystemBase
       // create a Motion Magic Velocity request, voltage output + from phoneix tuner documentation 
       final MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
 
-      //placeholder button 
-      //if (m_joy.getAButton()) {
-   // while the joystick A button is held, use a slower acceleration
-  // m_request.Acceleration = 100; // rot/s^2
-      // } else {
-       // otherwise, fall back to the config
-      // m_request.Acceleration = 0;
-     //  }
+      
 
      // set target velocity to 80 rps
      m_feeder_motor.setControl(m_request.withVelocity(80));
