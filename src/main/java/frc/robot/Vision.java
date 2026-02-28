@@ -16,6 +16,10 @@ public Vision()
 
 }
 
+public static void megaTagPose_periodic() {
+   
+}
+
 
 }
 

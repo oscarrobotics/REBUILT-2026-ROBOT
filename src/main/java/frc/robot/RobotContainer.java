@@ -6,14 +6,16 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -46,12 +48,23 @@ public class RobotContainer {
     public final Intake intake = new Intake();
     public final Feeder feeder = new Feeder();
     public final Climber climber = new Climber();
+    public final Vision vision = new Vision();
 
-
+    //shuffleboard tab
+    private final ShuffleboardTab tab = Shuffleboard.getTab("Controls");
+    private final GenericEntry shooterRPMEntry = tab.add("Shooter Target RPM", 4000).getEntry();
+    private final GenericEntry feederRPSEntry = tab.add("Feeder Target RPS", 80).getEntry();
 
     public RobotContainer() {
         configureBindings();
+        configureSystemsBindings();
+
     }
+
+      public void periodic() {
+        Vision.megaTagPose_periodic();
+    }
+
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
@@ -84,19 +97,42 @@ public class RobotContainer {
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-
-        //MECHANISM BUTTONS/COMMANDS 
-        joystick.x().onTrue(shooter.Startshooter()).onFalse(shooter.stopShooter()); //shooter control binding
-        
-
-
-
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
-    }
 
+    }
+    // where subsystem controls will be 
+    public void configureSystemsBindings() {
+        // Configure additional subsystems and bindings here.
+        joystick.x().whileTrue(
+            Commands.run(() -> {
+                double targetRPM = shooterRPMEntry.getDouble(4000);
+            
+                var shooterVelocity = RPM.of(targetRPM);
+
+                shooter.StartShooter(shooterVelocity);
+
+                double targetRPS = feederRPSEntry.getDouble(80.0);
+
+                if (shooter.shooteratSpeed()) {
+                    feeder.startFeeder(targetRPS);
+                } else {
+                    feeder.stopFeeder();
+                }
+             }, shooter, feeder)
+         ).onFalse(
+            Commands.run(() -> {
+                shooter.StopShooter();
+                feeder.stopFeeder();
+            }, shooter, feeder));
+           
+        }
+        
+            
+        
+    
     public Command getAutonomousCommand() {
         // Simple drive forward auton
         final var idle = new SwerveRequest.Idle();
@@ -114,5 +150,9 @@ public class RobotContainer {
             // Finally idle for the rest of auton
             drivetrain.applyRequest(() -> idle)
         );
+
     }
+
 }
+
+
