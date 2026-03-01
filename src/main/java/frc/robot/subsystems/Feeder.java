@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
@@ -16,7 +17,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Feeder extends SubsystemBase
 {
    //identifying motor 
-   final TalonFX m_feeder_motor = new TalonFX(5);  
+
+   final TalonFX m_feeder_motor ;
+   final TalonFXConfiguration m_feeder_encoder ; 
+   
   
    //shuffleboard tab entries 
      private final ShuffleboardTab tab = Shuffleboard.getTab("Feeder");
@@ -36,7 +40,11 @@ public class Feeder extends SubsystemBase
      private static final double default_velocity = 80.0; //RPS - in consideration of shooter at 5767 RPM
 
 
-      public Feeder(){
+      public Feeder(CANBus canbus){
+
+         m_feeder_motor =new TalonFX(54, canbus);
+         m_feeder_encoder = new TalonFXConfiguration(); 
+
          targetVelocity = 0;
          targetVelocityEntry.setDouble(targetVelocity);
          targetVelocityEntry.setDouble(default_velocity);
@@ -71,9 +79,10 @@ public class Feeder extends SubsystemBase
       }
 
       //method to start the feeder when shooter activates 
-      public void startFeeder(double targetRPS) {
+      public void startFeeder() {
          targetVelocity = default_velocity;
          targetVelocityEntry.setDouble(targetVelocity);
+         
       }
       
       //method to stop the feeder when shooter stops
