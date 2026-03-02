@@ -39,6 +39,8 @@ public class Shooter extends SubsystemBase{
     
     // current target RPM 
      private AngularVelocity m_targetRPM = RPM.of(0);
+
+     private final AngularVelocity m_default_speed = RPM.of(2800);
    
     
      //shuffleboard tab entries 
@@ -46,7 +48,7 @@ public class Shooter extends SubsystemBase{
      private final GenericEntry kPEntry = tab.add("kP", 0.01).getEntry();
      private final GenericEntry kIEntry = tab.add("kI", 0.0).getEntry();
      private final GenericEntry kDEntry = tab.add("kD", 0.0).getEntry();
-     private final GenericEntry maxRPMEntry = tab.add("Max RPM", 5767).getEntry();
+     private final GenericEntry maxRPMEntry = tab.add("Max RPM", 6784).getEntry();
      private final GenericEntry minOutputEntry = tab.add("Min Output", -1.0).getEntry();
      private final GenericEntry maxOutputEntry = tab.add("Max output", 1.0).getEntry();
      private final GenericEntry leaderRPMEntry = tab.add("Leader RPM", 0.0).getEntry();
@@ -58,7 +60,7 @@ public class Shooter extends SubsystemBase{
         configureMotors();
 
           //initializing max RPM 
-        k_maxShooterRPM = RPM.of(maxRPMEntry.getDouble(5767));
+        k_maxShooterRPM = RPM.of(maxRPMEntry.getDouble(6784));
    
     }
 
@@ -82,6 +84,7 @@ public class Shooter extends SubsystemBase{
                 .i(0.0)
                 .d(0.0)
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                .feedForward.kV(12.0/6784.0)
 
                 .outputRange(minOutputEntry.getDouble(-1.0), maxOutputEntry.getDouble(1.0));
                 //shooterleaderConfig.closedLoop.feedForward.kV(12/5767);
@@ -109,9 +112,7 @@ public class Shooter extends SubsystemBase{
             m_controllerleader.setSetpoint(
             velocity.in(RPM),
             ControlType.kVelocity,
-            ClosedLoopSlot.kSlot0, 
-            velocity.times(12.0/5767.0 * 0.90).in(RPM)
-          
+            ClosedLoopSlot.kSlot0          
             );
           }
           System.out.println("shooting");
@@ -127,7 +128,6 @@ public class Shooter extends SubsystemBase{
           m_controllerleader.setSetpoint(
             0, ControlType.kVoltage,
             ClosedLoopSlot.kSlot0,
-            0
             );
         }
 

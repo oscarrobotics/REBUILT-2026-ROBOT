@@ -14,17 +14,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 //using talonfx motor for feeder 
-public class Feeder extends SubsystemBase
+public class Hopper extends SubsystemBase
 {
    //identifying motor 
 
-   final TalonFX m_feeder_motor ;
-   final TalonFXConfiguration m_feeder_encoder ; 
+   final TalonFX m_hopper_motor ;
+   final TalonFXConfiguration m_hopper_encoder ; 
    final MotionMagicVelocityVoltage m_MagicVelocityVoltage = new MotionMagicVelocityVoltage(0);
    
   
    //shuffleboard tab entries 
-     private final ShuffleboardTab tab = Shuffleboard.getTab("Feeder");
+     private final ShuffleboardTab tab = Shuffleboard.getTab("Hopper");
      private final GenericEntry kPEntry = tab.add("kP", 0.11).getEntry();
      private final GenericEntry kIEntry = tab.add("kI", 0.0).getEntry();
      private final GenericEntry kDEntry = tab.add("kD", 0.0).getEntry();
@@ -38,13 +38,13 @@ public class Feeder extends SubsystemBase
      private double targetVelocity = 0;
 
      //default feeder velocity 
-     private static final double default_velocity = -60.0; //RPS - in consideration of shooter at 5767 RPM
+     private static final double default_velocity = -20.0; //RPS - in consideration of shooter at 5767 RPM
 
 
-      public Feeder(CANBus canbus){
+    public Hopper(){
 
-         m_feeder_motor =new TalonFX(54, canbus);
-         m_feeder_encoder = new TalonFXConfiguration(); 
+         m_hopper_motor =new TalonFX(51);
+         m_hopper_encoder = new TalonFXConfiguration(); 
 
          targetVelocity = 0;
          targetVelocityEntry.setDouble(targetVelocity);
@@ -70,35 +70,31 @@ public class Feeder extends SubsystemBase
       motionMagicConfigs.MotionMagicAcceleration = 400; // Target acceleration of 400 rps/s (0.25 seconds to max)
       motionMagicConfigs.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
       
-      m_feeder_motor.getConfigurator().apply(m_feeder_config);
+      m_hopper_motor.getConfigurator().apply(m_feeder_config);
       
       MotorOutputConfigs feederOutput = new MotorOutputConfigs();
       feederOutput.NeutralMode = NeutralModeValue.Brake;
       feederOutput.DutyCycleNeutralDeadband = 0.02; 
-      m_feeder_motor.getConfigurator().apply(feederOutput);
+      m_hopper_motor.getConfigurator().apply(feederOutput);
       
       }
 
       //method to start the feeder when shooter activates 
-      public void startFeeder() {
+      public void startHopper() {
          targetVelocity = default_velocity;
          targetVelocityEntry.setDouble(targetVelocity);
-         m_feeder_motor.setControl(m_MagicVelocityVoltage.withVelocity(default_velocity));
+         m_hopper_motor.setControl(m_MagicVelocityVoltage.withVelocity(default_velocity));
          
       }
       
       //method to stop the feeder when shooter stops
-      public void stopFeeder() {
+      public void stopHopper() {
          targetVelocity = 0;
-         m_feeder_motor.setControl(m_MagicVelocityVoltage.withVelocity(0));
+         m_hopper_motor.setControl(m_MagicVelocityVoltage.withVelocity(0));
          targetVelocityEntry.setDouble(0);
       }
 
-      public boolean withShooter(){
-         double currentVel =
-                  m_feeder_motor.getRotorVelocity().getValueAsDouble();
-               return Math.abs(currentVel - targetVelocity) < 2.0;
-      }
+    
 
     
 
@@ -107,12 +103,9 @@ public class Feeder extends SubsystemBase
       public void periodic() {
 
           //running motion magic control
-          m_feeder_motor.setControl(
-               new MotionMagicVelocityVoltage(targetVelocity));
-          
           //updating current velocity 
           currentVelocityEntry.setDouble(
-                  m_feeder_motor.getRotorVelocity().getValueAsDouble());
+                  m_hopper_motor.getRotorVelocity().getValueAsDouble());
           
       }
       
