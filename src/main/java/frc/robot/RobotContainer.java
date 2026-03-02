@@ -28,6 +28,8 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Hopper;
+import frc.robot.Vision;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -50,8 +52,9 @@ public class RobotContainer {
     public final Intake intake = new Intake();
     public final Feeder feeder = new Feeder(TunerConstants.kCANBus);
     public final Climber climber = new Climber();
-    // public final Vision vision = new Vision();
+    public final Hopper hopper = new Hopper();
 
+    public final Vision vision = new Vision(drivetrain);
     
     public RobotContainer() {
         configureBindings();
@@ -107,11 +110,14 @@ public class RobotContainer {
         // Configure additional subsystems and bindings here.
 
           //shooter command pressing x button - use right trigger to adjust speed 
-          joystick.x().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.k_maxShooterRPM.times(
-            joystick.getRightTriggerAxis())), shooter))
-            ).onFalse(shooter.stopCommand());
+        joystick.x().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.k_maxShooterRPM.times(
+        joystick.getRightTriggerAxis())), shooter))
+        ).onFalse(shooter.stopCommand());
 
+        joystick.rightBumper().whileTrue(new RepeatCommand( new InstantCommand(feeder::startFeeder, feeder))).onFalse(new InstantCommand(feeder::stopFeeder, feeder));
+        joystick.rightBumper().whileTrue(new RepeatCommand( new InstantCommand(hopper::startHopper, hopper))).onFalse(new InstantCommand(hopper::stopHopper, hopper));
 
+        joystick.y().onTrue(new InstantCommand(intake::toggle_arm, intake));
     }
             
         
