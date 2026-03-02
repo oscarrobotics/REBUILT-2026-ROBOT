@@ -114,10 +114,14 @@ public class RobotContainer {
         joystick.getRightTriggerAxis())), shooter))
         ).onFalse(shooter.stopCommand());
 
+        //starting feeeder 
         joystick.rightBumper().whileTrue(new RepeatCommand( new InstantCommand(feeder::startFeeder, feeder))).onFalse(new InstantCommand(feeder::stopFeeder, feeder));
         joystick.rightBumper().whileTrue(new RepeatCommand( new InstantCommand(hopper::startHopper, hopper))).onFalse(new InstantCommand(hopper::stopHopper, hopper));
 
+        //drops intake 
         joystick.y().onTrue(new InstantCommand(intake::toggle_arm, intake));
+
+        joystick.leftTrigger().whileTrue(new RepeatCommand( new InstantCommand(intake::startIntake))).onFalse(new InstantCommand(intake::stopIntake));
     }
             
         
