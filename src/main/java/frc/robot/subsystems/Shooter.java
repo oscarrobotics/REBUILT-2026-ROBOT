@@ -84,9 +84,14 @@ public class Shooter extends SubsystemBase{
                 .i(0.0)
                 .d(0.0)
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .feedForward.kV(12.0/6784.0)
+                .outputRange(minOutputEntry.getDouble(-1.0), maxOutputEntry.getDouble(1.0))
+                .feedForward.kV(12.0/6784.0);
+               
+                
 
-                .outputRange(minOutputEntry.getDouble(-1.0), maxOutputEntry.getDouble(1.0));
+
+          
+                
                 //shooterleaderConfig.closedLoop.feedForward.kV(12/5767);
                 
         m_shooterleader.configure(shooterleaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -127,7 +132,7 @@ public class Shooter extends SubsystemBase{
           m_targetRPM = RPM.of(0);
           m_controllerleader.setSetpoint(
             0, ControlType.kVoltage,
-            ClosedLoopSlot.kSlot0,
+            ClosedLoopSlot.kSlot0
             );
         }
 

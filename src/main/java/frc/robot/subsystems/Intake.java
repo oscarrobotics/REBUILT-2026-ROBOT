@@ -30,6 +30,9 @@ public class Intake extends SubsystemBase
    final TalonFX m_intake_arm_motor;
    final TalonFXConfiguration m_intake_arm_config;
 
+   final TalonFX m_intake_motor;
+   final TalonFXConfiguration m_intake_motor_config;
+
    final Angle arm_start = Rotations.of(-7.3666);
    final Angle arm_end = Rotations.of(50.1372);
    final Angle arm_delta = arm_end.minus(arm_start);
@@ -69,6 +72,9 @@ public class Intake extends SubsystemBase
          m_intake_arm_config = new TalonFXConfiguration();
 
          m_intake_arm_motor.setPosition(0);
+
+         m_intake_motor = new TalonFX(53);
+         m_intake_motor_config = new TalonFXConfiguration();
 
          configureMotor();
       }
@@ -123,10 +129,29 @@ public class Intake extends SubsystemBase
 
     intake_arm_Output.DutyCycleNeutralDeadband = 0.02; 
     m_intake_arm_motor.getConfigurator().apply(intake_arm_Output);
+
+    m_intake_motor_config.Slot0.kS = kSEntry.getDouble(0.25); // Add 0.25 V output to overcome static friction
+    m_intake_motor_config.Slot0.kV = kVEntry.getDouble(0.12); // A velocity target of 1 rps results in 0.12 V output
+    m_intake_motor_config.Slot0.kA = kAEntry.getDouble(0.01); // An acceleration of 1 rps/s requires 0.01 V output
+    m_intake_motor_config.Slot0.kP = kPEntry.getDouble(0.11); // An error of 1 rps results in 0.11 V output
+    m_intake_motor_config.Slot0.kI = kIEntry.getDouble(0.0);  // no output for integrated error
+    m_intake_motor_config.Slot0.kD = kDEntry.getDouble(0.0);  // no output for error derivative
+      
+      //magic motion settings 
+      var m_intake_motor_motionMagicConfigs = m_intake_motor_config.MotionMagic;
+     m_intake_motor_motionMagicConfigs.MotionMagicAcceleration = 400; // Target acceleration of 400 rps/s (0.25 seconds to max)
+     m_intake_motor_motionMagicConfigs.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
+      
+      m_intake_roller_motor.getConfigurator().apply(m_intake_roller_config);
+      
+      MotorOutputConfigs intake_motor_Output = new MotorOutputConfigs();
+      intake_motor_Output.NeutralMode = NeutralModeValue.Coast;
+      intake_motor_Output.DutyCycleNeutralDeadband = 0.02; 
+      m_intake_motor.getConfigurator().apply(intake_roller_Output);
     
     }
 
-      //method to start the feeder when shooter activates 
+      //method to start the feeder rolls
       public void startRoller() {
          targetVelocity = default_velocity;
          targetVelocityEntry.setDouble(targetVelocity);
@@ -134,25 +159,39 @@ public class Intake extends SubsystemBase
          
       }
       
-      //method to stop the feeder when shooter stops
+      //method to stop the feeder rolls
       public void stopRoller() {
          targetVelocity = 0;
          m_intake_roller_motor.setControl(m_MagicVelocityVoltage.withVelocity(0));
          targetVelocityEntry.setDouble(0);
       }
 
-      
+      public void startIntake() {
+         targetVelocity = default_velocity;
+         targetVelocityEntry.setDouble(targetVelocity);
+         m_intake_motor.setControl(m_MagicVelocityVoltage.withVelocity(default_velocity));
+      }
+
+      public void stopIntake() {
+          targetVelocity = 0;
+         m_intake_motor.setControl(m_MagicVelocityVoltage.withVelocity(0));
+         targetVelocityEntry.setDouble(0);
+      }
+
+      //extending out intake 
       public void extendArm(){
         m_intake_arm_motor.setControl(m_position_request.withPosition(arm_delta));
         System.out.println("arm out");
       }
 
+      //extending in intake
       public void retractArm(){
         m_intake_arm_motor.setControl(m_position_request.withPosition(0));
         System.out.println("arm in");
       }
       private boolean arm_out =  false;
       
+      //command to simultanouesly extract and retract intake arm
       public void toggle_arm(){
 
         if (arm_out){
