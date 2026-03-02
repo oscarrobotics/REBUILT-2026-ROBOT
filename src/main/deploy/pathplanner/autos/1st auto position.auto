@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1 - towards depot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1 - pick up fuel from depot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1 - depot to hub"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

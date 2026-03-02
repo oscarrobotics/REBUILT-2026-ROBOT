@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1 - towards depot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1 - pick up fuel from depot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1 - depot to hub"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1e - hub to trench"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1e - trench to neutral zone"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1e - neutral zone pick up balls"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
