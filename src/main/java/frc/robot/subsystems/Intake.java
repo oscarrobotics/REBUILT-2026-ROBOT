@@ -30,9 +30,7 @@ public class Intake extends SubsystemBase
    final TalonFX m_intake_arm_motor;
    final TalonFXConfiguration m_intake_arm_config;
 
-   final TalonFX m_intake_motor;
-   final TalonFXConfiguration m_intake_motor_config;
-
+   
    final Angle arm_start = Rotations.of(-7.3666);
    final Angle arm_end = Rotations.of(50.1372);
    final Angle arm_delta = arm_end.minus(arm_start);
@@ -56,12 +54,11 @@ public class Intake extends SubsystemBase
      private double targetVelocity = 0;
 
      //default feeder velocity 
-     private static final double default_velocity = -20.0; //RPS - in consideration of shooter at 5767 RPM
-
+     private static final double default_velocity = 80.0;
 
       public Intake(){
 
-         m_intake_roller_motor =new TalonFX(51);
+         m_intake_roller_motor =new TalonFX(53);
          m_intake_roller_config = new TalonFXConfiguration();
          targetVelocity = 0;
          targetVelocityEntry.setDouble(targetVelocity);
@@ -73,8 +70,7 @@ public class Intake extends SubsystemBase
 
          m_intake_arm_motor.setPosition(0);
 
-         m_intake_motor = new TalonFX(53);
-         m_intake_motor_config = new TalonFXConfiguration();
+     
 
          configureMotor();
       }
@@ -130,24 +126,7 @@ public class Intake extends SubsystemBase
     intake_arm_Output.DutyCycleNeutralDeadband = 0.02; 
     m_intake_arm_motor.getConfigurator().apply(intake_arm_Output);
 
-    m_intake_motor_config.Slot0.kS = kSEntry.getDouble(0.25); // Add 0.25 V output to overcome static friction
-    m_intake_motor_config.Slot0.kV = kVEntry.getDouble(0.12); // A velocity target of 1 rps results in 0.12 V output
-    m_intake_motor_config.Slot0.kA = kAEntry.getDouble(0.01); // An acceleration of 1 rps/s requires 0.01 V output
-    m_intake_motor_config.Slot0.kP = kPEntry.getDouble(0.11); // An error of 1 rps results in 0.11 V output
-    m_intake_motor_config.Slot0.kI = kIEntry.getDouble(0.0);  // no output for integrated error
-    m_intake_motor_config.Slot0.kD = kDEntry.getDouble(0.0);  // no output for error derivative
-      
-      //magic motion settings 
-      var m_intake_motor_motionMagicConfigs = m_intake_motor_config.MotionMagic;
-     m_intake_motor_motionMagicConfigs.MotionMagicAcceleration = 400; // Target acceleration of 400 rps/s (0.25 seconds to max)
-     m_intake_motor_motionMagicConfigs.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
-      
-      m_intake_roller_motor.getConfigurator().apply(m_intake_roller_config);
-      
-      MotorOutputConfigs intake_motor_Output = new MotorOutputConfigs();
-      intake_motor_Output.NeutralMode = NeutralModeValue.Coast;
-      intake_motor_Output.DutyCycleNeutralDeadband = 0.02; 
-      m_intake_motor.getConfigurator().apply(intake_roller_Output);
+   
     
     }
 
@@ -165,18 +144,35 @@ public class Intake extends SubsystemBase
          m_intake_roller_motor.setControl(m_MagicVelocityVoltage.withVelocity(0));
          targetVelocityEntry.setDouble(0);
       }
+      
+      private boolean roller_on =  false;
+      
+      //command to simultanouesly extract and retract intake arm
+      public void toggle_roller(){
 
-      public void startIntake() {
-         targetVelocity = default_velocity;
-         targetVelocityEntry.setDouble(targetVelocity);
-         m_intake_motor.setControl(m_MagicVelocityVoltage.withVelocity(default_velocity));
+        if (roller_on){
+            roller_on = false;
+            this.stopRoller();
+        }
+        else{
+            roller_on = true;
+            this.startRoller();
+        }
+
       }
 
-      public void stopIntake() {
-          targetVelocity = 0;
-         m_intake_motor.setControl(m_MagicVelocityVoltage.withVelocity(0));
-         targetVelocityEntry.setDouble(0);
-      }
+      // public void startIntake() {
+      //    targetVelocity = default_velocity;
+      //    targetVelocityEntry.setDouble(targetVelocity);
+      //    m_intake_motor.setControl(m_MagicVelocityVoltage.withVelocity(default_velocity));
+      // }
+
+      // public void stopIntake() {
+      //     targetVelocity = 0;
+      //    m_intake_motor.setControl(m_MagicVelocityVoltage.withVelocity(0));
+      //    // m_intake_arm_motor.setControl(m_)
+      //    targetVelocityEntry.setDouble(0);
+      // }
 
       //extending out intake 
       public void extendArm(){
@@ -206,6 +202,14 @@ public class Intake extends SubsystemBase
 
       }
 
+      // public void bounce_arm(){
+      //    if(m_ar)
+      //    if (m_intake_arm_motor.getPosition().isNear(arm_delta.in(Rotations), 1)){
+      //       m_intake_arm_motor.setControl(m_position_request.withPosition(arm_delta.minus(Rotations.of(5))));
+      //    }
+      //    if 
+
+      // }
                                 
 
       //Shuffleboard Updates */ 

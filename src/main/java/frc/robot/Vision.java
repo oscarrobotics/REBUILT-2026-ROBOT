@@ -22,11 +22,11 @@ public class Vision {
 
     String k_limelightName = "limelight"; //default name of the limelight, can be changed in the limelight settings   
 
-    final Distance k_xOffset = Meter.of(0.0); //front/back offest of camera to robot center (positive is forward, negative is backward)
+    final Distance k_xOffset = Meter.of(0.05); //front/back offest of camera to robot center (positive is forward, negative is backward)
     final Distance k_yOffset = Meter.of(0.0); //left/right offset of camera to robot center (positive is left, negative is right)
-    final Distance k_zOffset = Meter.of(0.0); //vertical offset of camera to robot center (positive is up, negative is down)
+    final Distance k_zOffset = Meter.of(0.4572); //vertical offset of camera to robot center (positive is up, negative is down)
     final Angle k_rollOffset = Degree.of(0.0); //roll offset of camera to robot center (positive is clockwise, negative is counterclockwise)    
-    final Angle k_pitchOffset = Degree.of(0.0); //pitch offset of camera to robot center (positive is up, negative is down)
+    final Angle k_pitchOffset = Degree.of(31.2); //pitch offset of camera to robot center (positive is up, negative is down)
     final Angle k_yawOffset = Degree.of(0.0); //yaw offset of camera to robot center (positive is left, negative is right)
 
     private CommandSwerveDrivetrain m_poseEstimator;
@@ -62,7 +62,7 @@ public class Vision {
     double lastTimestamp = 0.0;  
     public void megaTagPose_periodic()
     {
-        Pose2d currentPose = m_poseEstimator.samplePoseAt(lastTimestamp+0.015).orElse(new Pose2d(0,0, new Rotation2d(0)));
+        Pose2d currentPose = m_poseEstimator.samplePoseNow().orElse(new Pose2d(0,0, new Rotation2d(0)));
         LimelightHelpers.SetRobotOrientation(k_limelightName,
             currentPose.getRotation().getDegrees() , 
             0, 
@@ -76,12 +76,13 @@ public class Vision {
         boolean reject_update = false;
 
 
-        if (Math.abs(m_poseEstimator.getPigeon2().getYaw().getValueAsDouble())>360) //if the robot is rotating faster than 360 degrees per second, ignore vision measurements to prevent pose estimator from diverging
-        {
+        if (Math.abs(m_poseEstimator.getPigeon2().getYaw().getValueAsDouble())>360){ //if the robot is rotating faster than 360 degrees per second, ignore vision measurements to prevent pose estimator from diverging
+        
             reject_update = true;
         }
 
         if (mt2 != null) {
+            // System.out.println("Cameraing");
             
         
 

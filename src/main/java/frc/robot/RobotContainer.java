@@ -39,6 +39,11 @@ public class RobotContainer {
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+
+    private final SwerveRequest.RobotCentric testdrive = new SwerveRequest.RobotCentric()
+        .withDeadband(MaxSpeed* 0.1).withRotationalDeadband(MaxAngularRate*0.1)
+        .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+    
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
@@ -48,7 +53,7 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    public final Shooter shooter = new Shooter();
+    public final Shooter shooter = new Shooter(drivetrain);
     public final Intake intake = new Intake();
     public final Feeder feeder = new Feeder(TunerConstants.kCANBus);
     public final Climber climber = new Climber();
@@ -62,22 +67,36 @@ public class RobotContainer {
 
     }
 
-    //   public void periodic() {
-        // Vision.megaTagPose_periodic();
-    // }
+      public void periodic() {
+        vision.megaTagPose_periodic();
+    }
 
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
+
+        //field centric drive, use by default:
+        // drivetrain.setDefaultCommand(
+        //     // Drivetrain will execute this command periodically
+        //     drivetrain.applyRequest(() ->
+        //         drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+        //             .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        //             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+        //     )
+        // );
+
+        // robot  centric drive, use for testing and in special situations:
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                testdrive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
+
+
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -121,7 +140,7 @@ public class RobotContainer {
         //drops intake 
         joystick.y().onTrue(new InstantCommand(intake::toggle_arm, intake));
 
-        joystick.leftTrigger().whileTrue(new RepeatCommand( new InstantCommand(intake::startIntake))).onFalse(new InstantCommand(intake::stopIntake));
+        joystick.leftTrigger().onTrue(new InstantCommand(intake::toggle_roller, intake));
     }
             
         

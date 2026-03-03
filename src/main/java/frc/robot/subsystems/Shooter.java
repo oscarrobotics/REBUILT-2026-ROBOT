@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.*;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
@@ -18,12 +18,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 
 
 public class Shooter extends SubsystemBase{
     
+    private final CommandSwerveDrivetrain m_poseEstimator;
    //identifying motors + encoders with their ids 
     private final SparkFlex m_shooterleader = new SparkFlex(7, MotorType.kBrushless); //RIGHT (robot facing front)
     private final SparkFlex m_shooterfollower = new SparkFlex(6, MotorType.kBrushless); //LEFT SIDE (robot facing front)
@@ -41,6 +45,8 @@ public class Shooter extends SubsystemBase{
      private AngularVelocity m_targetRPM = RPM.of(0);
 
      private final AngularVelocity m_default_speed = RPM.of(2800);
+
+     
    
     
      //shuffleboard tab entries 
@@ -56,7 +62,9 @@ public class Shooter extends SubsystemBase{
      private final GenericEntry targetRPMEntry = tab.add("Target RPM", 0.0).getEntry();
 
 
-    public Shooter(){
+    public Shooter(CommandSwerveDrivetrain poseEstimator)
+    {
+        m_poseEstimator = poseEstimator;
         configureMotors();
 
           //initializing max RPM 
@@ -163,6 +171,51 @@ public class Shooter extends SubsystemBase{
           double currentRPM = m_shooterleader_encoder.getVelocity();
           double tolerance = 50;
           return m_targetRPM.minus(RPM.of(currentRPM)).gte(RPM.of(tolerance));
+        }
+
+        public AngularVelocity distance2speed(Distance target_distance){
+
+
+
+            Distance min_distance = Meters.of(1);
+            Distance opt_distance = Meters.of (2.1);
+            Distance max_distance = Meters.of(3);
+
+            AngularVelocity min_speed = RPM.of(1000);
+            AngularVelocity opt_speed = RPM.of(2800);
+            AngularVelocity max_speed = RPM.of(6000);
+
+            AngularVelocity target_speed ;
+            
+            if (target_distance.lt(opt_distance)){
+              target_speed = opt_speed.minus(min_speed).times(target_distance.div(opt_distance)).plus(min_speed);
+            }
+            else {
+              target_speed = max_speed.minus(opt_speed).times(target_distance.div(max_distance)).plus(opt_speed);
+            }
+
+            return target_speed;
+        }
+
+        public Distance get_target_distance(){
+          //calculate the distance from the shooter to appropriately colored hub
+
+          //var alliance = getalliancecolor();
+          var alliance = "Blue";
+          Distance target_distance = Meters.of(0);
+          
+          Translation2d red_hub = new Translation2d((-4.249-3.041)/2.0,0);
+          Translation2d blue_hub = new Translation2d((4.249+3.041)/2,0);
+
+
+
+          return target_distance;
+
+        }
+
+        public AngularVelocity get_target_speed(){
+          
+          return RPM.of(2800);
         }
 
         //Shuffleboard Updates */ 
