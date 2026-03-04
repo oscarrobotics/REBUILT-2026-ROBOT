@@ -26,7 +26,7 @@ public class Vision {
     final Distance k_yOffset = Meter.of(0.0); //left/right offset of camera to robot center (positive is left, negative is right)
     final Distance k_zOffset = Meter.of(0.4572); //vertical offset of camera to robot center (positive is up, negative is down)
     final Angle k_rollOffset = Degree.of(0.0); //roll offset of camera to robot center (positive is clockwise, negative is counterclockwise)    
-    final Angle k_pitchOffset = Degree.of(31.2); //pitch offset of camera to robot center (positive is up, negative is down)
+    final Angle k_pitchOffset = Degree.of(12.4); //pitch offset of camera to robot center (positive is up, negative is down)
     final Angle k_yawOffset = Degree.of(0.0); //yaw offset of camera to robot center (positive is left, negative is right)
 
     private CommandSwerveDrivetrain m_poseEstimator;
@@ -63,6 +63,7 @@ public class Vision {
     public void megaTagPose_periodic()
     {
         Pose2d currentPose = m_poseEstimator.samplePoseNow().orElse(new Pose2d(0,0, new Rotation2d(0)));
+        System.out.println(currentPose);
         LimelightHelpers.SetRobotOrientation(k_limelightName,
             currentPose.getRotation().getDegrees() , 
             0, 

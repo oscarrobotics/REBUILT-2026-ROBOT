@@ -216,13 +216,13 @@ public class Shooter extends SubsystemBase{
           return RPM.of(2800);
         }
 
-        public Command autoshoot(){
-            //set shooter to speed -> start intake + hopper -> shoot 
+        // public Command autoshoot(){
+        //     //set shooter to speed -> start intake + hopper -> shoot 
             
 
 
-          return 
-        }
+        //   return 
+        // }
         //Shuffleboard Updates */ 
         @Override
         public void periodic() {

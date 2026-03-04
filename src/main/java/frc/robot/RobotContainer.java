@@ -55,22 +55,22 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public final Shooter shooter = new Shooter(drivetrain);
-    public final Intake intake = new Intake();
-    public final Feeder feeder = new Feeder(TunerConstants.kCANBus);
+    public final Intake intake =   new Intake();
+    public final Feeder feeder =   new Feeder(TunerConstants.kCANBus);
     public final Climber climber = new Climber();
-    public final Hopper hopper = new Hopper();
+    public final Hopper hopper =   new Hopper();
 
-    public final Vision vision = new Vision(drivetrain);
+    // public final Vision vision = new Vision(drivetrain);
     
     public RobotContainer() {
         configureBindings();
         configureSystemsBindings();
-        name_commands();
+        // name_commands();
 
     }
 
       public void periodic() {
-        vision.megaTagPose_periodic();
+        // vision.megaTagPose_periodic();
     }
 
 
@@ -145,15 +145,15 @@ public class RobotContainer {
         operatorstick.leftTrigger().onTrue(new InstantCommand(intake::toggle_roller, intake));
 
 
-        intake.setDefaultCommand(new InstantCommand(()->intake.active_wiggle(operatorstick.getRightY())));
+        intake.setDefaultCommand(new InstantCommand(()->intake.active_wiggle(operatorstick.getRightY()), intake));
         
     }
             
         
-    public void name_commands(){
-        NamedCommands.registerCommand("autoshoot", 
+    // public void name_commands(){
+    //     NamedCommands.registerCommand("autoshoot", 
 
-    }
+    // }
 
 
     public Command getAutonomousCommand() {
