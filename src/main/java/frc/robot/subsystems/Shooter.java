@@ -46,7 +46,14 @@ public class Shooter extends SubsystemBase{
 
      private final AngularVelocity m_default_speed = RPM.of(2800);
 
-     
+
+     public Distance min_distance = Meters.of(1);
+     public Distance opt_distance = Meters.of (2.1);
+     public  Distance max_distance = Meters.of(3);
+    
+     public  AngularVelocity min_speed = RPM.of(1000);
+     public  AngularVelocity opt_speed = RPM.of(2800);
+     public  AngularVelocity max_speed = RPM.of(6000);
    
     
      //shuffleboard tab entries 
@@ -173,17 +180,8 @@ public class Shooter extends SubsystemBase{
           return m_targetRPM.minus(RPM.of(currentRPM)).gte(RPM.of(tolerance));
         }
 
+
         public AngularVelocity distance2speed(Distance target_distance){
-
-
-
-            Distance min_distance = Meters.of(1);
-            Distance opt_distance = Meters.of (2.1);
-            Distance max_distance = Meters.of(3);
-
-            AngularVelocity min_speed = RPM.of(1000);
-            AngularVelocity opt_speed = RPM.of(2800);
-            AngularVelocity max_speed = RPM.of(6000);
 
             AngularVelocity target_speed ;
             
@@ -205,8 +203,8 @@ public class Shooter extends SubsystemBase{
           Distance target_distance = Meters.of(0);
           
           Translation2d red_hub = new Translation2d((-4.249-3.041)/2.0,0);
-          Translation2d blue_hub = new Translation2d((4.249+3.041)/2,0);
-
+          Translation2d blue_hub = new Translation2d((4.249+3.041)/2.0,0);
+          //  distance = getpose.minus(redhub).magnitude;
 
 
           return target_distance;
@@ -218,6 +216,13 @@ public class Shooter extends SubsystemBase{
           return RPM.of(2800);
         }
 
+        public Command autoshoot(){
+            //set shooter to speed -> start intake + hopper -> shoot 
+            
+
+
+          return 
+        }
         //Shuffleboard Updates */ 
         @Override
         public void periodic() {

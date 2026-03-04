@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase
 
    
    final Angle arm_start = Rotations.of(-7.3666);
-   final Angle arm_end = Rotations.of(50.1372);
+   final Angle arm_end = Rotations.of(50.1372-4);
    final Angle arm_delta = arm_end.minus(arm_start);
 
    final MotionMagicVoltage m_position_request = new MotionMagicVoltage(0);
@@ -147,7 +147,7 @@ public class Intake extends SubsystemBase
       
       private boolean roller_on =  false;
       
-      //command to simultanouesly extract and retract intake arm
+      
       public void toggle_roller(){
 
         if (roller_on){
@@ -201,6 +201,24 @@ public class Intake extends SubsystemBase
 
 
       }
+      
+      public void active_wiggle(double wiggle){
+
+         Angle out_wiggle = Rotations.of(57).minus(arm_delta);
+         Angle in_wiggle = Rotations.of(18);
+
+         Angle adjust = wiggle<0 ? out_wiggle.times(wiggle) : in_wiggle.times(wiggle);
+
+         if (arm_out){
+            m_intake_arm_motor.setControl(m_position_request.withPosition(arm_delta.minus(adjust)));
+         }
+   
+
+
+
+      }
+
+
 
       // public void bounce_arm(){
       //    if(m_ar)

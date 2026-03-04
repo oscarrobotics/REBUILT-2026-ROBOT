@@ -49,7 +49,8 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandXboxController drivestick = new CommandXboxController(0);
+    private final CommandXboxController operatorstick = new CommandXboxController(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -64,6 +65,7 @@ public class RobotContainer {
     public RobotContainer() {
         configureBindings();
         configureSystemsBindings();
+        name_commands();
 
     }
 
@@ -90,9 +92,9 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                testdrive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                testdrive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-drivestick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -105,9 +107,9 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        drivestick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        drivestick.b().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-drivestick.getLeftY(), -drivestick.getLeftX()))
         ));
 
         // Run SysId routines when holding back/start and X/Y.
@@ -118,7 +120,7 @@ public class RobotContainer {
         // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        drivestick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -128,23 +130,32 @@ public class RobotContainer {
     public void configureSystemsBindings() {
         // Configure additional subsystems and bindings here.
 
-          //shooter command pressing x button - use right trigger to adjust speed 
-        joystick.x().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.k_maxShooterRPM.times(
-        joystick.getRightTriggerAxis())), shooter))
+          //shooter command pressing right trigger - use joystick to adjust (min-optimatal-max)
+        operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.opt_speed.plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
         ).onFalse(shooter.stopCommand());
+        
 
         //starting feeeder 
-        joystick.rightBumper().whileTrue(new RepeatCommand( new InstantCommand(feeder::startFeeder, feeder))).onFalse(new InstantCommand(feeder::stopFeeder, feeder));
-        joystick.rightBumper().whileTrue(new RepeatCommand( new InstantCommand(hopper::startHopper, hopper))).onFalse(new InstantCommand(hopper::stopHopper, hopper));
+        operatorstick.rightBumper().whileTrue(new RepeatCommand( new InstantCommand(feeder::startFeeder, feeder))).onFalse(new InstantCommand(feeder::stopFeeder, feeder));
+        operatorstick.rightBumper().whileTrue(new RepeatCommand( new InstantCommand(hopper::startHopper, hopper))).onFalse(new InstantCommand(hopper::stopHopper, hopper));
 
         //drops intake 
-        joystick.y().onTrue(new InstantCommand(intake::toggle_arm, intake));
+        operatorstick.y().onTrue(new InstantCommand(intake::toggle_arm, intake));
 
-        joystick.leftTrigger().onTrue(new InstantCommand(intake::toggle_roller, intake));
+        operatorstick.leftTrigger().onTrue(new InstantCommand(intake::toggle_roller, intake));
+
+
+        intake.setDefaultCommand(new InstantCommand(()->intake.active_wiggle(operatorstick.getRightY())));
+        
     }
             
         
-    
+    public void name_commands(){
+        NamedCommands.registerCommand("autoshoot", 
+
+    }
+
+
     public Command getAutonomousCommand() {
         // Simple drive forward auton
         final var idle = new SwerveRequest.Idle();
