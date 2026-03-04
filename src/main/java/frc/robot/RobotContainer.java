@@ -60,7 +60,7 @@ public class RobotContainer {
     public final Climber climber = new Climber();
     public final Hopper hopper =   new Hopper();
 
-    // public final Vision vision = new Vision(drivetrain);
+    public final Vision vision = new Vision(drivetrain);
     
     public RobotContainer() {
         configureBindings();
@@ -70,7 +70,7 @@ public class RobotContainer {
     }
 
       public void periodic() {
-        // vision.megaTagPose_periodic();
+        vision.megaTagPose_periodic();
     }
 
 
