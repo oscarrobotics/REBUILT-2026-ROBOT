@@ -1,20 +1,38 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import java.util.function.BooleanSupplier;
+
+import edu.wpi.first.units.VelocityUnit;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
 
 
 //using talonfx motor for feeder 
@@ -236,6 +254,86 @@ public class Intake extends SubsystemBase
 
       }
       
+
+
+
+
+      // AUTO COMMANDS + RELEVANT CODE BELOW
+
+          private void set_intake_speed(AngularVelocity speed){
+
+        // if (speed.gt(k_max_wheel_speed)){
+        //     //logger.log("max wheel speed exceeded")
+        //     speed = k_max_wheel_speed;
+
+        // }
+        // else if(speed.lt(k_max_wheel_speed.unaryMinus())){//unary Minus is negate
+        //     //logger.log("negativce max wheel speed exceeded")
+        //     speed = k_max_wheel_speed.unaryMinus();
+        // }
+
+        m_intake_roller_motor.setControl(m_intakeFXOut_v_mm.withVelocity(speed));
+
+          }
+
+         private void stop_intake(){
+        m_intake_roller_motor.setControl(m_brake);
+    }
+
+   private final NeutralOut m_brake = new NeutralOut();
+
+    public boolean m_has_fuel = false;
+        public BooleanSupplier has_fuel(){
+
+        return ()-> m_has_fuel;
+    }
+        
+
+   final MotionMagicVelocityTorqueCurrentFOC m_intakeFXOut_v_mm = new MotionMagicVelocityTorqueCurrentFOC(0).withSlot(0);
+   final MotionMagicExpoTorqueCurrentFOC m_intakeFXOut_ep_mm = new MotionMagicExpoTorqueCurrentFOC(0).withSlot(0);
+
+
+      private void has_fuel_false(){
+         m_has_fuel = false;
+      }
+
+
+      public Command auto_intake_fuel_command(){
+
+         return run(()->{set_intake_speed(AngularVelocity.ofBaseUnits(80, RotationsPerSecond));})
+         .withTimeout(2)
+         .andThen(this::stop_intake)
+         .andThen(this::has_fuel_false);
+      }
+
+          public Command auto_outtake_fuel_command(){
+
+        return run(()->{set_intake_speed(AngularVelocity.ofBaseUnits(-80, RotationsPerSecond));})
+            .withTimeout(2)
+            .andThen(this::stop_intake)
+            .andThen(this::has_fuel_false);
+
+   }
+
+       public void publish_intake_data(){
+
+        // put data important for charaterizing the data to the smart dashboard
+        double set_point = m_intake_roller_motor.getClosedLoopReference().getValueAsDouble();
+        double error = m_intake_roller_motor.getClosedLoopError().getValueAsDouble();
+        double tcurrent = m_intake_roller_motor.getTorqueCurrent().getValueAsDouble();
+        double velocity = m_intake_roller_motor.getVelocity().getValueAsDouble();
+        double acceleration = m_intake_roller_motor.getAcceleration().getValueAsDouble();
+        double position = m_intake_roller_motor.getPosition().getValueAsDouble();
+
+        SmartDashboard.putNumber("Intake Set Point", set_point);
+        SmartDashboard.putNumber("Intake Error", error);
+        SmartDashboard.putNumber("Intake Torque Current", tcurrent);
+        SmartDashboard.putNumber("Intake Velocity", velocity);
+        SmartDashboard.putNumber("Intake Acceleration", acceleration);
+        SmartDashboard.putNumber("Intake Position", position);
+
+        
+    }
    }
          
 
