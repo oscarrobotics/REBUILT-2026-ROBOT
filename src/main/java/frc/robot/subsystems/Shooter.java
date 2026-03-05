@@ -216,13 +216,16 @@ public class Shooter extends SubsystemBase{
           return RPM.of(2800);
         }
 
-        // public Command autoshoot(){
-        //     //set shooter to speed -> start intake + hopper -> shoot 
+        //auto to shoot preloaded fuel 
+        public Command autoshoot(){
+          //set shooter to speed -> start intake + hopper -> shoot 
+          return run(() -> {StartShooter(AngularVelocity.ofBaseUnits(1000, RPM));})
+            .withTimeout(2);
             
+        }
+          
+      
 
-
-        //   return 
-        // }
         //Shuffleboard Updates */ 
         @Override
         public void periodic() {

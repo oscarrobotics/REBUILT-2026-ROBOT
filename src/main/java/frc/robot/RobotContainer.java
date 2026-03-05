@@ -145,6 +145,7 @@ public class RobotContainer {
         operatorstick.leftTrigger().onTrue(new InstantCommand(intake::toggle_roller, intake));
 
 
+        
         intake.setDefaultCommand(new InstantCommand(()->intake.active_wiggle(operatorstick.getRightY()), intake));
         
     }
