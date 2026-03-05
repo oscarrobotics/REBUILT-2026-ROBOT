@@ -306,7 +306,7 @@ public class Intake extends SubsystemBase
          .andThen(this::has_fuel_false);
       }
 
-          public Command auto_outtake_coral_command(){
+          public Command auto_outtake_fuel_command(){
 
         return run(()->{set_intake_speed(AngularVelocity.ofBaseUnits(-80, RotationsPerSecond));})
             .withTimeout(2)
