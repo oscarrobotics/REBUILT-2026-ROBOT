@@ -44,7 +44,7 @@ public class Shooter extends SubsystemBase{
     // current target RPM 
      private AngularVelocity m_targetRPM = RPM.of(0);
 
-     private final AngularVelocity m_default_speed = RPM.of(2800);
+    //  private final AngularVelocity m_default_speed = RPM.of(2800);
 
 
      public Distance min_distance = Meters.of(1);
@@ -52,7 +52,7 @@ public class Shooter extends SubsystemBase{
      public  Distance max_distance = Meters.of(3);
     
      public  AngularVelocity min_speed = RPM.of(1000);
-     public  AngularVelocity opt_speed = RPM.of(2800);
+     public  AngularVelocity opt_speed = RPM.of(3600);
      public  AngularVelocity max_speed = RPM.of(6000);
    
     
@@ -135,11 +135,11 @@ public class Shooter extends SubsystemBase{
             ClosedLoopSlot.kSlot0          
             );
           }
-          System.out.println("shooting");
-          System.out.println(k_maxShooterRPM);
-          System.out.println(velocity);
-          System.out.print("setpoint: ");
-          System.out.println(m_controllerleader.getSetpoint());
+          // System.out.println("shooting");
+          // System.out.println(k_maxShooterRPM);
+          // System.out.println(velocity);
+          // System.out.print("setpoint: ");
+          // System.out.println(m_controllerleader.getSetpoint());
         }
 
         //method to stop the shooter 
@@ -223,7 +223,7 @@ public class Shooter extends SubsystemBase{
             .withTimeout(2);
             
         }
-          
+        
       
 
         //Shuffleboard Updates */ 

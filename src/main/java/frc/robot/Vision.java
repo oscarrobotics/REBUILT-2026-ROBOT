@@ -22,9 +22,9 @@ public class Vision {
 
     String k_limelightName = "limelight"; //default name of the limelight, can be changed in the limelight settings   
 
-    final Distance k_xOffset = Meter.of(0.05); //front/back offest of camera to robot center (positive is forward, negative is backward)
-    final Distance k_yOffset = Meter.of(0.0); //left/right offset of camera to robot center (positive is left, negative is right)
-    final Distance k_zOffset = Meter.of(0.4572); //vertical offset of camera to robot center (positive is up, negative is down)
+    final Distance k_xOffset = Inch.of(-27.25/2+6); //front/back offest of camera to robot center (positive is forward, negative is backward)
+    final Distance k_yOffset = Inch.of(27.25/2-3.125); //left/right offset of camera to robot center (positive is left, negative is right)
+    final Distance k_zOffset = Inch.of(22-0.75); //vertical offset of camera to robot center (positive is up, negative is down)
     final Angle k_rollOffset = Degree.of(0.0); //roll offset of camera to robot center (positive is clockwise, negative is counterclockwise)    
     final Angle k_pitchOffset = Degree.of(12.4); //pitch offset of camera to robot center (positive is up, negative is down)
     final Angle k_yawOffset = Degree.of(0.0); //yaw offset of camera to robot center (positive is left, negative is right)
@@ -63,7 +63,7 @@ public class Vision {
     public void megaTagPose_periodic()
     {
         Pose2d currentPose = m_poseEstimator.samplePoseNow().orElse(new Pose2d(0,0, new Rotation2d(0)));
-        System.out.println(currentPose);
+        // System.out.println(currentPose);
         LimelightHelpers.SetRobotOrientation(k_limelightName,
             currentPose.getRotation().getDegrees() , 
             0, 

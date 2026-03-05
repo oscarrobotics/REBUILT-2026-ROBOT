@@ -70,7 +70,7 @@ public class RobotContainer {
     }
 
       public void periodic() {
-        vision.megaTagPose_periodic();
+    //     vision.megaTagPose_periodic();
     }
 
 
@@ -79,24 +79,24 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
 
         //field centric drive, use by default:
-        // drivetrain.setDefaultCommand(
-        //     // Drivetrain will execute this command periodically
-        //     drivetrain.applyRequest(() ->
-        //         drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-        //             .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-        //             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        //     )
-        // );
-
-        // robot  centric drive, use for testing and in special situations:
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                testdrive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-drivestick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
+
+        // robot  centric drive, use for testing and in special situations:
+        // drivetrain.setDefaultCommand(
+        //     // Drivetrain will execute this command periodically
+        //     drivetrain.applyRequest(() ->
+        //         testdrive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+        //             .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        //             .withRotationalRate(-drivestick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+        //     )
+        // );
 
 
 
@@ -145,7 +145,7 @@ public class RobotContainer {
         operatorstick.leftTrigger().onTrue(new InstantCommand(intake::toggle_roller, intake));
 
 
-        
+
         intake.setDefaultCommand(new InstantCommand(()->intake.active_wiggle(operatorstick.getRightY()), intake));
         
     }

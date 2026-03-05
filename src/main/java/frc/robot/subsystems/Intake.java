@@ -49,8 +49,8 @@ public class Intake extends SubsystemBase
    final TalonFXConfiguration m_intake_arm_config;
 
    
-   final Angle arm_start = Rotations.of(-7.3666);
-   final Angle arm_end = Rotations.of(50.1372-4);
+   final Angle arm_start = Rotations.of(1.39);
+   final Angle arm_end = Rotations.of(57.917-4);
    final Angle arm_delta = arm_end.minus(arm_start);
 
    final MotionMagicVoltage m_position_request = new MotionMagicVoltage(0);
@@ -195,13 +195,13 @@ public class Intake extends SubsystemBase
       //extending out intake 
       public void extendArm(){
         m_intake_arm_motor.setControl(m_position_request.withPosition(arm_delta));
-        System.out.println("arm out");
+      //   System.out.println("arm out");
       }
 
       //extending in intake
       public void retractArm(){
         m_intake_arm_motor.setControl(m_position_request.withPosition(0));
-        System.out.println("arm in");
+      //   System.out.println("arm in");
       }
       private boolean arm_out =  false;
       
@@ -298,15 +298,16 @@ public class Intake extends SubsystemBase
       }
 
 
-      public Command auto_intake_fuel_command(){
+   public Command auto_intake_fuel_command(){
 
-         return run(()->{set_intake_speed(AngularVelocity.ofBaseUnits(80, RotationsPerSecond));})
+         return run(()->{
+         set_intake_speed(AngularVelocity.ofBaseUnits(80, RotationsPerSecond));})
          .withTimeout(2)
          .andThen(this::stop_intake)
          .andThen(this::has_fuel_false);
       }
 
-          public Command auto_outtake_fuel_command(){
+   public Command auto_outtake_fuel_command(){
 
         return run(()->{set_intake_speed(AngularVelocity.ofBaseUnits(-80, RotationsPerSecond));})
             .withTimeout(2)
