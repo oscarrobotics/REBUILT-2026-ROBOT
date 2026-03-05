@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "auto_intake_fuel_command"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "1 - pick up fuel from depot"
