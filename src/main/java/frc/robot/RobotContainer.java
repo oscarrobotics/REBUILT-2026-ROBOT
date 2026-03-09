@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Queue;
+
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
@@ -18,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -79,13 +82,17 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
 
         //field centric drive, use by default:
+        
+
+
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-drivestick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
+                    
+                    )
         );
 
         // robot  centric drive, use for testing and in special situations:
@@ -131,16 +138,29 @@ public class RobotContainer {
         // Configure additional subsystems and bindings here.
 
           //shooter command pressing right trigger - use joystick to adjust (min-optimatal-max)
-        operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.opt_speed.plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
+    
+        operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.speed_setpoint.plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
         ).onFalse(shooter.stopCommand());
-        
 
-        //starting feeeder 
-        operatorstick.rightBumper().whileTrue(new RepeatCommand( new InstantCommand(feeder::startFeeder, feeder))).onFalse(new InstantCommand(feeder::stopFeeder, feeder));
+        operatorstick.povUp().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.close_speed;})); //near hub
+        operatorstick.povDown().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.full_speed;})); //farthest away
+        operatorstick.povLeft().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.far_speed;})); //mid-far way
+        operatorstick.povRight().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.opt_speed;})); //mid-far way
+   
+
+
+
+        //Feeder Controls
+        operatorstick.rightBumper().onTrue(new InstantCommand(feeder::startFeeder, feeder)).onFalse(new InstantCommand(feeder::stopFeeder, feeder));
+        
+        //Hopper Controls
         operatorstick.rightBumper().whileTrue(new RepeatCommand( new InstantCommand(hopper::startHopper, hopper))).onFalse(new InstantCommand(hopper::stopHopper, hopper));
+        operatorstick.leftBumper().onTrue(new InstantCommand(hopper::reverseHopper, hopper)).onFalse(new InstantCommand(hopper::stopHopper, hopper));
+        
 
         //drops intake 
         operatorstick.y().onTrue(new InstantCommand(intake::toggle_arm, intake));
+        operatorstick.x().onTrue(new InstantCommand(intake::reverseRoller, intake)).onFalse(new InstantCommand(intake::stopRoller));
 
         operatorstick.leftTrigger().onTrue(new InstantCommand(intake::toggle_roller, intake));
 
@@ -150,30 +170,32 @@ public class RobotContainer {
         
     }
             
-        
-    // public void name_commands(){
-    //     NamedCommands.registerCommand("autoshoot", 
-
-    // }
-
-
+     
     public Command getAutonomousCommand() {
         // Simple drive forward auton
-        final var idle = new SwerveRequest.Idle();
+        // final var idle = new SwerveRequest.Idle();
         return Commands.sequence(
-            // Reset our field centric heading to match the robot
-            // facing away from our alliance station wall (0 deg).
-            drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-            // Then slowly drive forward (away from us) for 5 seconds.
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(0.5)
-                    .withVelocityY(0)
-                    .withRotationalRate(0)
-            )
-            .withTimeout(5.0),
-            // Finally idle for the rest of auton
-            drivetrain.applyRequest(() -> idle)
+            //(near the hub) 
+            // extract intake 
+            // wait 0.5 second
+            // set shooter speed 1000
+            // 
+
+            // intake.auto_extract_out_intake_command(),
+            new InstantCommand(intake::half_deploy), new WaitCommand(2),
+            shooter.autoshoot(),
+            feeder.auto_feeder_start(),
+            hopper.auto_start_hopper(),
+            new WaitCommand(3), 
+            intake.auto_intake_fuel_command(),  
+            new WaitCommand(5),
+            new InstantCommand(shooter::StopShooter, shooter),
+            feeder.auto_feeder_end(),
+            hopper.auto_stop_hopper(),
+            intake.auto_intake_fuel_stop()
         );
+
+
 
     }
 

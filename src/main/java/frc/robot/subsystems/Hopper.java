@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -8,9 +11,14 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 
 //using talonfx motor for feeder 
@@ -35,10 +43,10 @@ public class Hopper extends SubsystemBase
      private final GenericEntry currentVelocityEntry = tab.add("Current Velocity (RPS)", 0).getEntry();
 
      //intializing closed-loop target velocity
-     private double targetVelocity = 0;
+     private AngularVelocity targetVelocity = RPM.of(0);
 
      //default feeder velocity 
-     private static final double default_velocity = -20.0; //RPS - in consideration of shooter at 5767 RPM
+     private static final AngularVelocity default_velocity = RotationsPerSecond.of(-20.0); //RPS - in consideration of shooter at 5767 RPM
 
 
     public Hopper(){
@@ -46,9 +54,9 @@ public class Hopper extends SubsystemBase
          m_hopper_motor =new TalonFX(51);
          m_hopper_encoder = new TalonFXConfiguration(); 
 
-         targetVelocity = 0;
-         targetVelocityEntry.setDouble(targetVelocity);
-         targetVelocityEntry.setDouble(default_velocity);
+        
+         targetVelocityEntry.setDouble(targetVelocity.in(RPM));
+         targetVelocityEntry.setDouble(default_velocity.in(RPM));
 
          configureMotor();
       }
@@ -62,8 +70,8 @@ public class Hopper extends SubsystemBase
       m_feeder_config.Slot0.kV = kVEntry.getDouble(0.12); // A velocity target of 1 rps results in 0.12 V output
       m_feeder_config.Slot0.kA = kAEntry.getDouble(0.01); // An acceleration of 1 rps/s requires 0.01 V output
       m_feeder_config.Slot0.kP = kPEntry.getDouble(0.11); // An error of 1 rps results in 0.11 V output
-      m_feeder_config.Slot0.kI = kIEntry.getDouble(0.0);  // no output for integrated error
-      m_feeder_config.Slot0.kD = kDEntry.getDouble(0.0);  // no output for error derivative
+      m_feeder_config.Slot0.kI = kIEntry.getDouble(0.01);  // no output for integrated error
+      m_feeder_config.Slot0.kD = kDEntry.getDouble(0.01);  // no output for error derivative
       
       //magic motion settings 
       var motionMagicConfigs = m_feeder_config.MotionMagic;
@@ -82,18 +90,49 @@ public class Hopper extends SubsystemBase
       //method to start the feeder when shooter activates 
       public void startHopper() {
          targetVelocity = default_velocity;
-         targetVelocityEntry.setDouble(targetVelocity);
+         targetVelocityEntry.setDouble(targetVelocity.in(RPM));
          m_hopper_motor.setControl(m_MagicVelocityVoltage.withVelocity(default_velocity));
          
       }
       
       //method to stop the feeder when shooter stops
       public void stopHopper() {
-         targetVelocity = 0;
+         targetVelocity = RPM.of(0);
          m_hopper_motor.setControl(m_MagicVelocityVoltage.withVelocity(0));
          targetVelocityEntry.setDouble(0);
       }
 
+      public void reverseHopper(){
+         targetVelocity = default_velocity.times(-0.5);
+
+         m_hopper_motor.setControl(m_MagicVelocityVoltage.withVelocity(targetVelocity));
+
+         targetVelocityEntry.setDouble(targetVelocity.in(RPM));
+      }
+
+      public Command auto_start_hopper(){
+
+         return Commands.sequence(
+            new InstantCommand(this::startHopper, this),
+            new WaitCommand(1)
+         );
+      }
+
+      public Command auto_stop_hopper(){
+
+         return Commands.sequence(
+            new InstantCommand(this::stopHopper,this),
+            new WaitCommand(1)
+         );
+      }
+
+      public Command auto_reverse_hopper(){
+
+         return Commands.sequence(
+            new InstantCommand(this::reverseHopper, this),
+            new WaitCommand(1)
+         );
+      }
     
 
     

@@ -28,8 +28,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
@@ -162,6 +164,11 @@ public class Intake extends SubsystemBase
          m_intake_roller_motor.setControl(m_MagicVelocityVoltage.withVelocity(0));
          targetVelocityEntry.setDouble(0);
       }
+
+      public void reverseRoller(){
+         targetVelocity = -default_velocity;
+         m_intake_roller_motor.setControl(m_MagicVelocityVoltage.withVelocity(-default_velocity));
+      }
       
       private boolean roller_on =  false;
       
@@ -223,7 +230,7 @@ public class Intake extends SubsystemBase
       public void active_wiggle(double wiggle){
 
          Angle out_wiggle = Rotations.of(57).minus(arm_delta);
-         Angle in_wiggle = Rotations.of(18);
+         Angle in_wiggle = Rotations.of(32);
 
          Angle adjust = wiggle<0 ? out_wiggle.times(wiggle) : in_wiggle.times(wiggle);
 
@@ -234,6 +241,9 @@ public class Intake extends SubsystemBase
 
 
 
+      }
+      public void half_deploy(){
+         m_intake_arm_motor.setControl(m_position_request.withPosition(arm_delta.times(0.5)));
       }
 
 
@@ -302,10 +312,16 @@ public class Intake extends SubsystemBase
 
          return run(()->{
          set_intake_speed(AngularVelocity.ofBaseUnits(80, RotationsPerSecond));})
-         .withTimeout(2)
-         .andThen(this::stop_intake)
-         .andThen(this::has_fuel_false);
+         .withTimeout(2);
+         // .andThen(this::stop_intake)
+         // .andThen(this::has_fuel_false);
       }
+
+   public Command auto_intake_fuel_stop(){
+      return run(()->{
+         set_intake_speed(AngularVelocity.ofBaseUnits(0, RotationsPerSecond));
+      });
+   }
 
    public Command auto_outtake_fuel_command(){
 
@@ -315,6 +331,26 @@ public class Intake extends SubsystemBase
             .andThen(this::has_fuel_false);
 
    }
+
+   public Command auto_extract_out_intake_command(){
+
+      return Commands.sequence(
+         new InstantCommand(this::extendArm,this),
+         new WaitCommand(1)
+      );
+
+
+   }
+
+   public Command auto_retract_in_intake_command(){
+
+      return Commands.sequence(
+         new InstantCommand(this::retractArm,this),
+         new WaitCommand(1)
+
+      );
+   }
+
 
        public void publish_intake_data(){
 

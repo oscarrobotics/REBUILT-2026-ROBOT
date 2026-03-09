@@ -16,6 +16,8 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -49,11 +51,19 @@ public class Shooter extends SubsystemBase{
 
      public Distance min_distance = Meters.of(1);
      public Distance opt_distance = Meters.of (2.1);
-     public  Distance max_distance = Meters.of(3);
+     public Distance max_distance = Meters.of(3);
     
      public  AngularVelocity min_speed = RPM.of(1000);
      public  AngularVelocity opt_speed = RPM.of(3600);
      public  AngularVelocity max_speed = RPM.of(6000);
+
+     public AngularVelocity speed_setpoint = opt_speed;
+
+     public AngularVelocity close_speed = RPM.of(2500);
+     public AngularVelocity far_speed = RPM.of(5000);
+     public AngularVelocity full_speed = RPM.of(6500);
+
+     
    
     
      //shuffleboard tab entries 
@@ -142,6 +152,14 @@ public class Shooter extends SubsystemBase{
           // System.out.println(m_controllerleader.getSetpoint());
         }
 
+        // public void shoot_with_set_speed( CommandXboxController opStick){
+
+          
+
+
+
+        // }
+
         //method to stop the shooter 
         public void StopShooter() {
           m_targetRPM = RPM.of(0);
@@ -218,13 +236,20 @@ public class Shooter extends SubsystemBase{
 
         //auto to shoot preloaded fuel 
         public Command autoshoot(){
-          //set shooter to speed -> start intake + hopper -> shoot 
-          return run(() -> {StartShooter(AngularVelocity.ofBaseUnits(1000, RPM));})
-            .withTimeout(2);
+          
+          return runOnce(() -> {StartShooter(opt_speed);})
+          .andThen(new WaitCommand(4));
+          // .until(this::shooteratSpeed)
+
+            // .withTimeout(2);
+
             
         }
         
       
+        
+          
+        
 
         //Shuffleboard Updates */ 
         @Override
