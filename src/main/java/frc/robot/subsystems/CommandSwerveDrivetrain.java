@@ -16,7 +16,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -46,6 +49,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
+    public Pose2d red_hub = new Pose2d(4.65+5,4.05, new Rotation2d(0));///to be fixed
+    public Pose2d blue_hub = new Pose2d(4.65,4.05,new Rotation2d(0));
+
+
+    
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
     // private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
@@ -204,19 +212,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         var alliance = "Blue";
         // calculate angle to hub
-        Pose2d red_hub = new Pose2d(4.65+5,4.05, new Rotation2d(0));///to be fixed
-        Pose2d blue_hub = new Pose2d(4.65,4.05,new Rotation2d(0));
+        
           //  distance = getpose.minus(redhub).magnitude;
-        Rotation2d offset = new Rotation2d(0);
+        Angle offset = Degree.of(0);
         if (alliance == "Blue"){
-            Pose2d pose = this.samplePoseNow().get();
 
-            offset = pose.relativeTo(blue_hub).getTranslation().getAngle();
+
+            offset = get_target_angle_differnce();
             
 
         }
         // calculate rate
-        rate = rate.times(offset.div(180).getDegrees());
+        rate = rate.times(0.5*offset.div(180).in(Degree));
 
         if (rate.gt(RotationsPerSecond.of(0.75))){
             rate = RotationsPerSecond.of(0.75);
@@ -232,6 +239,83 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
 
     }
+
+
+    public Angle get_target_angle_differnce(){
+        //calculate the angle from the shooter to appropriately colored hub
+
+        //var alliance = getalliancecolor();
+        var alliance = "Blue";
+        Angle angle_differnce = Degree.of(0);
+        
+        // Translation2d red_hub = new Translation2d((-4.249-3.041)/2.0,4.05);
+        // Translation2d blue_hub = new Translation2d((4.249+3.041)/2.0,4.05);
+        
+        //  distance = getpose.minus(redhub).magnitude;
+
+        if (alliance == "Blue"){
+           Pose2d pose = samplePoseNow().get();
+
+            angle_differnce = samplePoseNow().get().getRotation().getMeasure().minus(get_target_angle());
+
+        }
+
+        return angle_differnce;
+    }
+
+
+
+
+    public Angle get_target_angle(){
+        //calculate the angle from the shooter to appropriately colored hub
+
+        //var alliance = getalliancecolor();
+        var alliance = "Blue";
+        Angle angle_to_target = Degree.of(0);
+        
+        // Translation2d red_hub = new Translation2d((-4.249-3.041)/2.0,4.05);
+        // Translation2d blue_hub = new Translation2d((4.249+3.041)/2.0,4.05);
+        
+        //  distance = getpose.minus(redhub).magnitude;
+
+        if (alliance == "Blue"){
+           Pose2d pose = samplePoseNow().get();
+
+            angle_to_target = pose.relativeTo(blue_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(180));
+
+            if (angle_to_target.in(Degree) > 180){
+                angle_to_target = angle_to_target.minus(Degree.of(360));
+            }   
+
+        }
+        
+        return angle_to_target;
+    }
+
+
+     public Distance get_target_distance(){
+          //calculate the distance from the shooter to appropriately colored hub
+
+          //var alliance = getalliancecolor();
+          var alliance = "Blue";
+          Distance target_distance = Meters.of(0);
+          
+   
+
+          if (alliance == "Blue"){
+             Pose2d pose = samplePoseNow().get();
+
+             double offset = pose.relativeTo(blue_hub).getTranslation().getNorm();
+              target_distance = Meters.of(offset);
+
+          }
+
+
+
+          return target_distance;
+
+        }
+
 
     /**
      * Runs the SysId Quasistatic test in the given direction for the routine
@@ -277,6 +361,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         //         m_hasAppliedOperatorPerspective = true;
         //     });
         // }
+
+     
+
     }
 
     private void startSimThread() {

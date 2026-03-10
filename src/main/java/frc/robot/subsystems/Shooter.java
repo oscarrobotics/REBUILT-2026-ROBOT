@@ -78,6 +78,11 @@ public class Shooter extends SubsystemBase{
      private final GenericEntry leaderRPMEntry = tab.add("Leader RPM", 0.0).getEntry();
      private final GenericEntry followerRPMEntry = tab.add("Follower RPM", 0.0).getEntry();
      private final GenericEntry targetRPMEntry = tab.add("Target RPM", 0.0).getEntry();
+     private final GenericEntry targetDistanceEntry = tab.add("Target Distance (m)", 0.0).getEntry();
+     private final GenericEntry targetSpeedEntry = tab.add("Target Speed (RPM)", 0.0).getEntry();
+     private final GenericEntry angleToTargetEntry = tab.add("Angle to Target (degrees)", 0.0).getEntry();
+     private final GenericEntry angleDelta = tab.add("Angle Delta (degrees)", 0.0).getEntry();
+     
 
 
     public Shooter(CommandSwerveDrivetrain poseEstimator)
@@ -215,36 +220,11 @@ public class Shooter extends SubsystemBase{
             return target_speed;
         }
 
-        public Distance get_target_distance(){
-          //calculate the distance from the shooter to appropriately colored hub
-
-          //var alliance = getalliancecolor();
-          var alliance = "Blue";
-          Distance target_distance = Meters.of(0);
-          
-          // Translation2d red_hub = new Translation2d((-4.249-3.041)/2.0,4.05);
-          // Translation2d blue_hub = new Translation2d((4.249+3.041)/2.0,4.05);
-          Pose2d red_hub = new Pose2d(4.65+5,4.05, new Rotation2d(0));///to be fixed
-          Pose2d blue_hub = new Pose2d(4.65,4.05,new Rotation2d(0));
-          //  distance = getpose.minus(redhub).magnitude;
-
-          if (alliance == "Blue"){
-             Pose2d pose = m_poseEstimator.samplePoseNow().get();
-
-             double offset = pose.relativeTo(blue_hub).getTranslation().getNorm();
-              target_distance = Meters.of(offset);
-
-          }
-
-
-
-          return target_distance;
-
-        }
+       
 
         public AngularVelocity get_auto_speed(){
 
-          return distance2speed(get_target_distance());
+          return distance2speed(m_poseEstimator.get_target_distance());
         }
 
         public AngularVelocity get_target_speed(){
@@ -278,6 +258,10 @@ public class Shooter extends SubsystemBase{
          leaderRPMEntry.setDouble(m_shooterleader_encoder.getVelocity());
          followerRPMEntry.setDouble(m_shooterfollower_encoder.getVelocity());
          targetRPMEntry.setDouble(m_targetRPM.in(RPM));
+        targetDistanceEntry.setDouble(m_poseEstimator.get_target_distance().in(Meter));
+        targetSpeedEntry.setDouble(get_target_speed().in(RPM));
+        angleToTargetEntry.setDouble(m_poseEstimator.get_target_angle().in(Degree));
+        angleDelta.setDouble(m_poseEstimator.get_target_angle_differnce().in(Degree));
      }
   }       
                        
