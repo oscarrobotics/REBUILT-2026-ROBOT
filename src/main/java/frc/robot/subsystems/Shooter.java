@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -100,6 +101,7 @@ public class Shooter extends SubsystemBase{
       SparkFlexConfig shooterleaderConfig = new SparkFlexConfig();
         shooterleaderConfig.idleMode(IdleMode.kCoast);
         shooterleaderConfig.smartCurrentLimit(40);
+        shooterleaderConfig.secondaryCurrentLimit(80);
 
         shooterleaderConfig.closedLoop
                 // .p(kPEntry.getDouble(0.00001))
@@ -220,13 +222,29 @@ public class Shooter extends SubsystemBase{
           var alliance = "Blue";
           Distance target_distance = Meters.of(0);
           
-          Translation2d red_hub = new Translation2d((-4.249-3.041)/2.0,0);
-          Translation2d blue_hub = new Translation2d((4.249+3.041)/2.0,0);
+          // Translation2d red_hub = new Translation2d((-4.249-3.041)/2.0,4.05);
+          // Translation2d blue_hub = new Translation2d((4.249+3.041)/2.0,4.05);
+          Pose2d red_hub = new Pose2d(4.65+5,4.05, new Rotation2d(0));///to be fixed
+          Pose2d blue_hub = new Pose2d(4.65,4.05,new Rotation2d(0));
           //  distance = getpose.minus(redhub).magnitude;
+
+          if (alliance == "Blue"){
+             Pose2d pose = m_poseEstimator.samplePoseNow().get();
+
+             double offset = pose.relativeTo(blue_hub).getTranslation().getNorm();
+              target_distance = Meters.of(offset);
+
+          }
+
 
 
           return target_distance;
 
+        }
+
+        public AngularVelocity get_auto_speed(){
+
+          return distance2speed(get_target_distance());
         }
 
         public AngularVelocity get_target_speed(){

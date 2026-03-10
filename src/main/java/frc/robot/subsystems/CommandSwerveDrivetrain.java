@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -198,6 +199,40 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return run(() -> this.setControl(request.get()));
     }
 
+    public AngularVelocity get_rate_to_lock(){
+        AngularVelocity rate = RotationsPerSecond.of(0.75);
+
+        var alliance = "Blue";
+        // calculate angle to hub
+        Pose2d red_hub = new Pose2d(4.65+5,4.05, new Rotation2d(0));///to be fixed
+        Pose2d blue_hub = new Pose2d(4.65,4.05,new Rotation2d(0));
+          //  distance = getpose.minus(redhub).magnitude;
+        Rotation2d offset = new Rotation2d(0);
+        if (alliance == "Blue"){
+            Pose2d pose = this.samplePoseNow().get();
+
+            offset = pose.relativeTo(blue_hub).getTranslation().getAngle();
+            
+
+        }
+        // calculate rate
+        rate = rate.times(offset.div(180).getDegrees());
+
+        if (rate.gt(RotationsPerSecond.of(0.75))){
+            rate = RotationsPerSecond.of(0.75);
+        }
+        if (rate.lt(RotationsPerSecond.of(-0.75))){
+            rate = RotationsPerSecond.of(-0.75);
+        }
+
+
+        return rate  ;
+
+
+
+
+    }
+
     /**
      * Runs the SysId Quasistatic test in the given direction for the routine
      * specified by {@link #m_sysIdRoutineToApply}.
@@ -219,6 +254,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.dynamic(direction);
     }
+
+
+    
 
     @Override
     public void periodic() {

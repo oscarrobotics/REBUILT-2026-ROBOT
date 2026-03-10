@@ -46,7 +46,7 @@ public class Hopper extends SubsystemBase
      private AngularVelocity targetVelocity = RPM.of(0);
 
      //default feeder velocity 
-     private static final AngularVelocity default_velocity = RotationsPerSecond.of(-20.0); //RPS - in consideration of shooter at 5767 RPM
+     private static final AngularVelocity default_velocity = RotationsPerSecond.of(-50.0); //RPS - in consideration of shooter at 5767 RPM (changed from -20 to -50)
 
 
     public Hopper(){

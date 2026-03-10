@@ -73,7 +73,7 @@ public class RobotContainer {
     }
 
       public void periodic() {
-    //     vision.megaTagPose_periodic();
+        vision.megaTagPose_periodic();
     }
 
 
@@ -88,12 +88,24 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed*1) // Drive forward with negative Y (forward)
+                    .withVelocityY(-drivestick.getLeftX() * MaxSpeed*1) // Drive left with negative X (left)
                     .withRotationalRate(-drivestick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
                     
                     )
         );
+
+        drivestick.a().toggleOnTrue(drivetrain.applyRequest(() ->
+                drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(drivetrain.get_rate_to_lock()) // Drive counterclockwise with negative X (left)
+                    
+                    )
+        );
+            // Drivetrain will execute this command periodically
+            
+        
+        
 
         // robot  centric drive, use for testing and in special situations:
         // drivetrain.setDefaultCommand(
@@ -114,7 +126,7 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        drivestick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        // drivestick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         drivestick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-drivestick.getLeftY(), -drivestick.getLeftX()))
         ));
@@ -139,7 +151,10 @@ public class RobotContainer {
 
           //shooter command pressing right trigger - use joystick to adjust (min-optimatal-max)
     
-        operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.speed_setpoint.plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
+        // operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.speed_setpoint.plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
+        // ).onFalse(shooter.stopCommand());
+
+        operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.get_auto_speed().plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
         ).onFalse(shooter.stopCommand());
 
         operatorstick.povUp().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.close_speed;})); //near hub

@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -69,6 +71,16 @@ public class Feeder extends SubsystemBase
       m_feeder_config.Slot0.kI = kIEntry.getDouble(0.0);  // no output for integrated error
       m_feeder_config.Slot0.kD = kDEntry.getDouble(0.0);  // no output for error derivative
       
+      //applying current limits to feeder 
+      var talonFXConfigurator = m_feeder_motor.getConfigurator();
+      var limitConfigs = new CurrentLimitsConfigs();
+      
+      //enable stator current limit 
+      limitConfigs.StatorCurrentLimit = 100;
+      limitConfigs.StatorCurrentLimitEnable = true;
+
+      talonFXConfigurator.apply(limitConfigs);
+
       //magic motion settings 
       var motionMagicConfigs = m_feeder_config.MotionMagic;
       motionMagicConfigs.MotionMagicAcceleration = 400; // Target acceleration of 400 rps/s (0.25 seconds to max)
@@ -80,6 +92,9 @@ public class Feeder extends SubsystemBase
       feederOutput.NeutralMode = NeutralModeValue.Brake;
       feederOutput.DutyCycleNeutralDeadband = 0.02; 
       m_feeder_motor.getConfigurator().apply(feederOutput);
+
+      
+
       
       }
 
