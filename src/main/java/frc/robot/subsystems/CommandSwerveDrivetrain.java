@@ -223,7 +223,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         }
         // calculate rate
-        rate = rate.times(0.5*offset.div(180).in(Degree));
+        rate = rate.times(5*offset.div(-180).in(Degree));
 
         if (rate.gt(RotationsPerSecond.of(0.75))){
             rate = RotationsPerSecond.of(0.75);

@@ -50,13 +50,13 @@ public class Shooter extends SubsystemBase{
     //  private final AngularVelocity m_default_speed = RPM.of(2800);
 
 
-     public Distance min_distance = Meters.of(1);
-     public Distance opt_distance = Meters.of (2.1);
-     public Distance max_distance = Meters.of(3);
+     public Distance min_distance = Meters.of(1.7);
+     public Distance opt_distance = Meters.of (3.1);
+     public Distance max_distance = Meters.of(5.3);
     
-     public  AngularVelocity min_speed = RPM.of(1000);
-     public  AngularVelocity opt_speed = RPM.of(3600);
-     public  AngularVelocity max_speed = RPM.of(6000);
+     public  AngularVelocity min_speed = RPM.of(2800);
+     public  AngularVelocity opt_speed = RPM.of(3200);
+     public  AngularVelocity max_speed = RPM.of(4200);
 
      public AngularVelocity speed_setpoint = opt_speed;
 
@@ -211,12 +211,12 @@ public class Shooter extends SubsystemBase{
             AngularVelocity target_speed ;
             
             if (target_distance.lt(opt_distance)){
-              target_speed = opt_speed.minus(min_speed).times(target_distance.div(opt_distance)).plus(min_speed);
+              target_speed = opt_speed.minus(min_speed).times(target_distance.minus(min_distance).div(opt_distance.minus(min_distance))).plus(min_speed);
             }
             else {
-              target_speed = max_speed.minus(opt_speed).times(target_distance.div(max_distance)).plus(opt_speed);
+              target_speed = max_speed.minus(opt_speed).times(target_distance.minus(opt_distance).div(max_distance.minus(opt_distance))).plus(opt_speed);
             }
-
+            targetSpeedEntry.setDouble(target_speed.in(RPM));
             return target_speed;
         }
 
@@ -259,7 +259,7 @@ public class Shooter extends SubsystemBase{
          followerRPMEntry.setDouble(m_shooterfollower_encoder.getVelocity());
          targetRPMEntry.setDouble(m_targetRPM.in(RPM));
         targetDistanceEntry.setDouble(m_poseEstimator.get_target_distance().in(Meter));
-        targetSpeedEntry.setDouble(get_target_speed().in(RPM));
+        // targetSpeedEntry.setDouble(get_target_speed().in(RPM));
         angleToTargetEntry.setDouble(m_poseEstimator.get_target_angle().in(Degree));
         angleDelta.setDouble(m_poseEstimator.get_target_angle_differnce().in(Degree));
      }

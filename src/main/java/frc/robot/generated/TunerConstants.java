@@ -27,11 +27,18 @@ public class TunerConstants {
         .withKP(100).withKI(0).withKD(0.5)
         .withKS(0.1).withKV(1.50).withKA(0)
         .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+    // private static final Slot0Configs steerGains = new Slot0Configs()
+    //     .withKP(1000).withKI(0).withKD(10)
+    //     .withKS(2.0).withKV(10).withKA(0)
+    //     .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     private static final Slot0Configs driveGains = new Slot0Configs()
         .withKP(0.1).withKI(0).withKD(0)
         .withKS(0).withKV(0.124);
+    // private static final Slot0Configs driveGains = new Slot0Configs()
+    //     .withKP(0.5).withKI(0).withKD(0)
+    //     .withKS(0).withKV(0.6);
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
@@ -40,7 +47,7 @@ public class TunerConstants {
     // The closed-loop output type to use for the drive motors;
     // This affects the PID/FF gains for the drive motors
     private static final ClosedLoopOutputType kDriveClosedLoopOutput = ClosedLoopOutputType.Voltage;
-    // private static final ClosedLoopOutputType kkDriveClosedLoopOutput = ClosedLoopOutputType.TorqueCurrentFOC;
+    // private static final ClosedLoopOutputType kDriveClosedLoopOutput = ClosedLoopOutputType.TorqueCurrentFOC;
 
     // The type of motor used for the drive motor
     private static final DriveMotorArrangement kDriveMotorType = DriveMotorArrangement.TalonFX_Integrated;
@@ -53,7 +60,7 @@ public class TunerConstants {
 
     // The stator current at which the wheels start to slip;
     // This needs to be tuned to your individual robot
-    private static final Current kSlipCurrent = Amps.of(100);
+    private static final Current kSlipCurrent = Amps.of(70);
 
     // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
     // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
