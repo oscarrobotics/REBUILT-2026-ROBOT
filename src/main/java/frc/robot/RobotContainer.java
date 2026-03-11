@@ -42,6 +42,10 @@ public class RobotContainer {
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+    
+    private final SwerveRequest.FieldCentricFacingAngle locked_drive = new SwerveRequest.FieldCentricFacingAngle()
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
     private final SwerveRequest.RobotCentric testdrive = new SwerveRequest.RobotCentric()
         .withDeadband(MaxSpeed* 0.1).withRotationalDeadband(MaxAngularRate*0.1)
@@ -102,6 +106,17 @@ public class RobotContainer {
                     
                     )
         );
+        drivestick.b().toggleOnTrue(drivetrain.applyRequest(() ->
+                locked_drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withHeadingPID(1, 0, 0)
+                    .withTargetDirection(new Rotation2d(drivetrain.get_target_angle()))
+                    
+                    )
+        );
+
+
+
             // Drivetrain will execute this command periodically
             
         
