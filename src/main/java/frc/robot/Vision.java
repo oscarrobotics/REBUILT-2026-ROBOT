@@ -62,7 +62,7 @@ public class Vision {
     double lastTimestamp = 0.0;  
     public void megaTagPose_periodic()
     {
-        Pose2d currentPose = m_poseEstimator.samplePoseNow().orElse(new Pose2d(0,0, new Rotation2d(0)));
+        Pose2d currentPose = m_poseEstimator.samplePoseNow();
         // System.out.println(currentPose);
         LimelightHelpers.SetRobotOrientation(k_limelightName,
             currentPose.getRotation().getDegrees() , 

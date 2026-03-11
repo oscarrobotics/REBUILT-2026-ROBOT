@@ -254,9 +254,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         //  distance = getpose.minus(redhub).magnitude;
 
         if (alliance == "Blue"){
-           Pose2d pose = samplePoseNow().get();
+           Pose2d pose = samplePoseNow();
 
-            angle_differnce = samplePoseNow().get().getRotation().getMeasure().minus(get_target_angle());
+            angle_differnce = samplePoseNow().getRotation().getMeasure().minus(get_target_angle());
 
         }
 
@@ -279,7 +279,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         //  distance = getpose.minus(redhub).magnitude;
 
         if (alliance == "Blue"){
-           Pose2d pose = samplePoseNow().get();
+           Pose2d pose = samplePoseNow();
 
             angle_to_target = pose.relativeTo(blue_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(180));
 
@@ -303,7 +303,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    
 
           if (alliance == "Blue"){
-             Pose2d pose = samplePoseNow().get();
+             Pose2d pose = samplePoseNow();
 
              double offset = pose.relativeTo(blue_hub).getTranslation().getNorm();
               target_distance = Meters.of(offset);
@@ -426,7 +426,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
     }
 
-    public Optional<Pose2d> samplePoseNow(){
-        return super.samplePoseAt(Utils.getCurrentTimeSeconds());
+    Pose2d prevPose2d = new Pose2d();
+    public Pose2d samplePoseNow(){
+        prevPose2d = super.samplePoseAt(Utils.getCurrentTimeSeconds()).orElse(prevPose2d);
+        return prevPose2d;
     }
 }

@@ -54,9 +54,9 @@ public class Shooter extends SubsystemBase{
      public Distance opt_distance = Meters.of (3.1);
      public Distance max_distance = Meters.of(5.3);
     
-     public  AngularVelocity min_speed = RPM.of(2800);
-     public  AngularVelocity opt_speed = RPM.of(3200);
-     public  AngularVelocity max_speed = RPM.of(4200);
+     public  AngularVelocity min_speed = RPM.of(2800/1.03);
+     public  AngularVelocity opt_speed = RPM.of(3200/1.03);
+     public  AngularVelocity max_speed = RPM.of(4200/1.03);
 
      public AngularVelocity speed_setpoint = opt_speed;
 
@@ -83,6 +83,10 @@ public class Shooter extends SubsystemBase{
      private final GenericEntry angleToTargetEntry = tab.add("Angle to Target (degrees)", 0.0).getEntry();
      private final GenericEntry angleDelta = tab.add("Angle Delta (degrees)", 0.0).getEntry();
      
+     private final GenericEntry motorvoltageEntry = tab.add("Motor Voltage", 0.0).getEntry();
+     private final GenericEntry motorCurrentEntry = tab.add("Motor Current", 0.0).getEntry();
+     
+     
 
 
     public Shooter(CommandSwerveDrivetrain poseEstimator)
@@ -105,19 +109,19 @@ public class Shooter extends SubsystemBase{
 
       SparkFlexConfig shooterleaderConfig = new SparkFlexConfig();
         shooterleaderConfig.idleMode(IdleMode.kCoast);
-        shooterleaderConfig.smartCurrentLimit(40);
-        shooterleaderConfig.secondaryCurrentLimit(80);
+        shooterleaderConfig.smartCurrentLimit(80);
+        shooterleaderConfig.secondaryCurrentLimit(120);
 
         shooterleaderConfig.closedLoop
                 // .p(kPEntry.getDouble(0.00001))
                 // .i(kIEntry.getDouble(0.0))
                 // .d(kDEntry.getDouble(0.0))
-                .p(0.000)
+                .p(0.00001)
                 .i(0.0)
                 .d(0.0)
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .outputRange(minOutputEntry.getDouble(-1.0), maxOutputEntry.getDouble(1.0))
-                .feedForward.kV(12.0/6784.0);
+                .feedForward.kV(12.0/6784.0*1.03);
                
                 
 
@@ -131,7 +135,7 @@ public class Shooter extends SubsystemBase{
       //for follower motor 
         SparkFlexConfig shooterfollowerConfig = new SparkFlexConfig();
         shooterfollowerConfig.idleMode(IdleMode.kCoast);
-        shooterfollowerConfig.smartCurrentLimit(40);
+        shooterfollowerConfig.smartCurrentLimit(80);
         shooterfollowerConfig.follow(m_shooterleader, true); // follows leader motor
        
       
@@ -182,22 +186,22 @@ public class Shooter extends SubsystemBase{
           
         }
         //live shuffleboard upates 
-        public void updatePID(){
-            double newP = kPEntry.getDouble(0.01);
-            double newI = kIEntry.getDouble(0.0);
-            double newD = kDEntry.getDouble(0.0);
-            double newMin = minOutputEntry.getDouble(-1.0);
-            double newMax = maxOutputEntry.getDouble(1.0);
+        // public void updatePID(){
+        //     double newP = kPEntry.getDouble(0.01);
+        //     double newI = kIEntry.getDouble(0.0);
+        //     double newD = kDEntry.getDouble(0.0);
+        //     double newMin = minOutputEntry.getDouble(-1.0);
+        //     double newMax = maxOutputEntry.getDouble(1.0);
         
-            SparkFlexConfig config = new SparkFlexConfig();
-            config.idleMode(IdleMode.kCoast);
-            config.smartCurrentLimit(40);
-            config.closedLoop.p(newP).i(newI).d(newD).outputRange(newMin, newMax);
+        //     SparkFlexConfig config = new SparkFlexConfig();
+        //     config.idleMode(IdleMode.kCoast);
+        //     config.smartCurrentLimit(80);
+        //     config.closedLoop.p(newP).i(newI).d(newD).outputRange(newMin, newMax);
 
-            m_shooterleader.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        //     m_shooterleader.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-            k_maxShooterRPM = RPM.of(maxRPMEntry.getDouble(5767));
-        }
+        //     k_maxShooterRPM = RPM.of(maxRPMEntry.getDouble(5767));
+        // }
       
         public boolean shooteratSpeed(){
           double currentRPM = m_shooterleader_encoder.getVelocity();
@@ -262,6 +266,10 @@ public class Shooter extends SubsystemBase{
         // targetSpeedEntry.setDouble(get_target_speed().in(RPM));
         angleToTargetEntry.setDouble(m_poseEstimator.get_target_angle().in(Degree));
         angleDelta.setDouble(m_poseEstimator.get_target_angle_differnce().in(Degree));
+        motorvoltageEntry.setDouble(m_shooterleader.getAppliedOutput()*12);
+        motorCurrentEntry.setDouble(m_shooterleader.getOutputCurrent());
+
+
      }
   }       
                        

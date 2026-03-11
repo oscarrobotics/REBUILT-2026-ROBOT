@@ -206,7 +206,7 @@ public class TunerConstants {
      */
     public static CommandSwerveDrivetrain createDrivetrain() {
         return new CommandSwerveDrivetrain(
-            DrivetrainConstants,20,FrontLeft, FrontRight, BackLeft, BackRight
+            DrivetrainConstants,150,FrontLeft, FrontRight, BackLeft, BackRight
         );
     }
 
