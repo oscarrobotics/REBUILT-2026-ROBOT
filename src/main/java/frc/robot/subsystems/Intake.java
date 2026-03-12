@@ -351,6 +351,10 @@ public class Intake extends SubsystemBase
       );
    }
 
+   public void set_position_as_out(){
+      m_intake_arm_motor.setPosition(arm_delta.in(Rotations));
+   }
+
 
        public void publish_intake_data(){
 

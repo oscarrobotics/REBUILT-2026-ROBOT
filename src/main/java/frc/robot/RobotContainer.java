@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.Queue;
 
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
@@ -196,6 +197,9 @@ public class RobotContainer {
         operatorstick.x().onTrue(new InstantCommand(intake::reverseRoller, intake)).onFalse(new InstantCommand(intake::stopRoller));
 
         operatorstick.leftTrigger().onTrue(new InstantCommand(intake::toggle_roller, intake));
+
+
+        operatorstick.start().onTrue(new InstantCommand(intake::set_position_as_out, intake));
 
 
 
