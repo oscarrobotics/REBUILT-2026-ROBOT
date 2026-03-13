@@ -205,8 +205,15 @@ public class Shooter extends SubsystemBase{
       
         public boolean shooteratSpeed(){
           double currentRPM = m_shooterleader_encoder.getVelocity();
-          double tolerance = 50;
-          return m_targetRPM.minus(RPM.of(currentRPM)).gte(RPM.of(tolerance));
+          double tolerance = 100;
+          return m_targetRPM.isNear(RPM.of(currentRPM), RPM.of(tolerance));
+        }
+
+        public boolean shooterAimed(){
+          
+          return m_poseEstimator.get_target_angle_differnce().isNear(Degree.of(0),Degree.of(5) );
+          //  || m_poseEstimator.get_target_angle_differnce().isNear(Degree.of(0),Degree.of(5) );
+
         }
 
 
@@ -229,6 +236,10 @@ public class Shooter extends SubsystemBase{
         public AngularVelocity get_auto_speed(){
 
           return distance2speed(m_poseEstimator.get_target_distance());
+        }
+
+        public AngularVelocity get_moving_auto_speed(){
+          return distance2speed(m_poseEstimator.get_target_moving_distance());
         }
 
         public AngularVelocity get_target_speed(){
