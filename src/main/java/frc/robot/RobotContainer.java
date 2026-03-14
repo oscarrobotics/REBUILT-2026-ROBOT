@@ -10,9 +10,14 @@ import java.util.Queue;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
@@ -65,17 +70,24 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public final Shooter shooter = new Shooter(drivetrain);
-    public final Intake intake =   new Intake();
-    public final Feeder feeder =   new Feeder(TunerConstants.kCANBus);
+    public final Intake intake =   new Intake(drivetrain);
+    public final Feeder feeder =   new Feeder(TunerConstants.kCANBus,drivetrain);
     public final Climber climber = new Climber();
-    public final Hopper hopper =   new Hopper();
+    public final Hopper hopper =   new Hopper(drivetrain);
 
     public final Vision vision = new Vision(drivetrain);
+
+    
+    private final SendableChooser<Command> autoChooser;
     
     public RobotContainer() {
         configureBindings();
         configureSystemsBindings();
-        // name_commands();
+        name_commands();
+        autoChooser = AutoBuilder.buildAutoChooser("auto paths");
+        Shuffleboard.getTab("autonomouspath").add(autoChooser);
+
+        
 
     }
 
@@ -172,8 +184,18 @@ public class RobotContainer {
         // operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.speed_setpoint.plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
         // ).onFalse(shooter.stopCommand());
 
+
+
+
         operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.get_auto_speed().plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
         ).onFalse(shooter.stopCommand());
+
+        operatorstick.rightTrigger().and(shooter::shooteratSpeed).and( shooter::shooterAimed)
+            .whileTrue(new RepeatCommand(new InstantCommand(feeder::startFeeder, feeder) ))
+            .whileTrue(new RepeatCommand( new InstantCommand(hopper::startHopper, hopper)))
+            .onFalse(new InstantCommand(hopper::stopHopper, hopper))
+            .onFalse(new InstantCommand(feeder::stopFeeder, feeder));
+
 
         operatorstick.povUp().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.close_speed;})); //near hub
         operatorstick.povDown().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.full_speed;})); //farthest away
@@ -204,29 +226,49 @@ public class RobotContainer {
     }
             
      
+    private void name_commands() {
+        NamedCommands.registerCommand("autointakefuel", intake.auto_intake_fuel_command());
+        NamedCommands.registerCommand("autointakefuelstop", intake.auto_intake_fuel_stop());
+        NamedCommands.registerCommand("autointakearmhalf", new InstantCommand(intake::half_deploy));
+        
+        NamedCommands.registerCommand("autoshoot", shooter.autoshoot());
+        NamedCommands.registerCommand("autoshootstop", new InstantCommand(shooter::StopShooter, shooter));
+
+        NamedCommands.registerCommand("autofeederstart", feeder.auto_feeder_start());
+        NamedCommands.registerCommand("autofeederstop", feeder.auto_feeder_end());
+
+        NamedCommands.registerCommand("autohopperstart", hopper.auto_start_hopper());
+        NamedCommands.registerCommand("autohopperstop", hopper.auto_stop_hopper());
+       
+    }
+
+
+
     public Command getAutonomousCommand() {
+
+        return autoChooser.getSelected();
         // Simple drive forward auton
         // final var idle = new SwerveRequest.Idle();
-        return Commands.sequence(
+       // return Commands.sequence(
             //(near the hub) 
             // extract intake 
             // wait 0.5 second
             // set shooter speed 1000
             // 
 
-            // intake.auto_extract_out_intake_command(),
-            new InstantCommand(intake::half_deploy), new WaitCommand(2),
-            shooter.autoshoot(),
-            feeder.auto_feeder_start(),
-            hopper.auto_start_hopper(),
-            new WaitCommand(3), 
-            intake.auto_intake_fuel_command(),  
-            new WaitCommand(5),
-            new InstantCommand(shooter::StopShooter, shooter),
-            feeder.auto_feeder_end(),
-            hopper.auto_stop_hopper(),
-            intake.auto_intake_fuel_stop()
-        );
+        //     // intake.auto_extract_out_intake_command(),
+        //     new InstantCommand(intake::half_deploy), new WaitCommand(2),
+        //     shooter.autoshoot(),
+        //     feeder.auto_feeder_start(),
+        //     hopper.auto_start_hopper(),
+        //     new WaitCommand(3), 
+        //     intake.auto_intake_fuel_command(),  
+        //     new WaitCommand(5),
+        //     new InstantCommand(shooter::StopShooter, shooter),
+        //     feeder.auto_feeder_end(),
+        //     hopper.auto_stop_hopper(),
+        //     intake.auto_intake_fuel_stop()
+        
 
 
 

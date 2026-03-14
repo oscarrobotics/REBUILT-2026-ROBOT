@@ -29,6 +29,8 @@ public class Hopper extends SubsystemBase
    final TalonFX m_hopper_motor ;
    final TalonFXConfiguration m_hopper_encoder ; 
    final MotionMagicVelocityVoltage m_MagicVelocityVoltage = new MotionMagicVelocityVoltage(0);
+
+   final CommandSwerveDrivetrain m_pose_estimator;
    
   
    //shuffleboard tab entries 
@@ -46,10 +48,10 @@ public class Hopper extends SubsystemBase
      private AngularVelocity targetVelocity = RPM.of(0);
 
      //default feeder velocity 
-     private static final AngularVelocity default_velocity = RotationsPerSecond.of(-50.0); //RPS - in consideration of shooter at 5767 RPM (changed from -20 to -50)
+     private static final AngularVelocity default_velocity = RotationsPerSecond.of(-100.0); //RPS - in consideration of shooter at 5767 RPM (changed from -20 to -50)
+     
 
-
-    public Hopper(){
+    public Hopper(CommandSwerveDrivetrain pose_estimator){
 
          m_hopper_motor =new TalonFX(51);
          m_hopper_encoder = new TalonFXConfiguration(); 
@@ -59,6 +61,8 @@ public class Hopper extends SubsystemBase
          targetVelocityEntry.setDouble(default_velocity.in(RPM));
 
          configureMotor();
+
+         m_pose_estimator = pose_estimator;
       }
 
       //creating the configuration process which will set limits for shooting

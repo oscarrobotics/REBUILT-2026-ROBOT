@@ -59,7 +59,7 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "trench shoot",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

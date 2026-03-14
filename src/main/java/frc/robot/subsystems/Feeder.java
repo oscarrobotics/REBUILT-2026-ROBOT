@@ -28,7 +28,8 @@ public class Feeder extends SubsystemBase
    final TalonFXConfiguration m_feeder_encoder ; 
    final MotionMagicVelocityVoltage m_MagicVelocityVoltage = new MotionMagicVelocityVoltage(0);
    
-  
+   final CommandSwerveDrivetrain m_pose_estimator;
+
    //shuffleboard tab entries 
      private final ShuffleboardTab tab = Shuffleboard.getTab("Feeder");
      private final GenericEntry kPEntry = tab.add("kP", 0.11).getEntry();
@@ -47,7 +48,7 @@ public class Feeder extends SubsystemBase
      private static final double default_velocity = -60.0; //RPS - in consideration of shooter at 5767 RPM
 
 
-      public Feeder(CANBus canbus){
+      public Feeder(CANBus canbus, CommandSwerveDrivetrain pose_estimator){
 
          m_feeder_motor =new TalonFX(54, canbus);
          m_feeder_encoder = new TalonFXConfiguration(); 
@@ -57,6 +58,8 @@ public class Feeder extends SubsystemBase
          targetVelocityEntry.setDouble(default_velocity);
 
          configureMotor();
+
+         m_pose_estimator = pose_estimator;
       }
 
       //creating the configuration process which will set limits for shooting

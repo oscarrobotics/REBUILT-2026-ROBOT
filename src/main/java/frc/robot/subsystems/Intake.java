@@ -57,7 +57,7 @@ public class Intake extends SubsystemBase
 
    final MotionMagicVoltage m_position_request = new MotionMagicVoltage(0);
   
-
+   final CommandSwerveDrivetrain m_pose_estimator;
 
    //shuffleboard tab entries 
      private final ShuffleboardTab tab = Shuffleboard.getTab("Intake");
@@ -76,7 +76,7 @@ public class Intake extends SubsystemBase
      //default feeder velocity 
      private static final double default_velocity = 80.0;
 
-      public Intake(){
+      public Intake(CommandSwerveDrivetrain pose_estimator){
 
          m_intake_roller_motor =new TalonFX(53);
          m_intake_roller_config = new TalonFXConfiguration();
@@ -93,6 +93,8 @@ public class Intake extends SubsystemBase
      
 
          configureMotor();
+
+         m_pose_estimator = pose_estimator;
       }
 
       //creating the configuration process which will set limits for shooting
