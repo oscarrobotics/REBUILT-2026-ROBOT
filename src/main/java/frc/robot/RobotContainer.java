@@ -86,6 +86,7 @@ public class RobotContainer {
         configureBindings();
         configureSystemsBindings();
         name_commands();
+        drivetrain.configure_autobuilder();
         autoChooser = AutoBuilder.buildAutoChooser("auto paths");
         Shuffleboard.getTab("autonomouspath").add(autoChooser);
 

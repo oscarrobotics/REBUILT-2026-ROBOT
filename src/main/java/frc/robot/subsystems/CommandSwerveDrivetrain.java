@@ -25,6 +25,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -208,11 +209,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
 
-    void configure_autobuilder(){
-        ModuleConfig defaultconfig = new ModuleConfig(null, null, m_drivetrainId, null, null, kNumConfigAttempts);
+    public void configure_autobuilder(){
+        DCMotor defaultmotor = new DCMotor(1,1,1,1,1,1);
+        ModuleConfig defaultconfig = new ModuleConfig(1, 1, 1, defaultmotor, 1, 1);
         RobotConfig config = new RobotConfig(1,1,defaultconfig, 1);
     try{
-      config = RobotConfig.fromGUISettings();
+       config = RobotConfig.fromGUISettings();
     } catch (Exception e) {
       // Handle exception as needed
       e.printStackTrace();
