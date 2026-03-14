@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.8396282051282067,
-        "y": 7.104846153846154
+        "x": 3.2117307692307704,
+        "y": 6.953679487179487
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.8396282051282067,
-        "y": 7.104846153846154
+        "x": 3.3396410256468427,
+        "y": 7.2560128205070065
       },
       "isLocked": false,
       "linkedName": "neturaltoshoot"
     },
     {
       "anchor": {
-        "x": 4.4792051282051295,
-        "y": 7.476948717948718
+        "x": 4.5373461538519715,
+        "y": 7.500205128199314
       },
       "prevControl": {
-        "x": 3.1652179487179497,
-        "y": 7.535089743589744
+        "x": 3.979192307698126,
+        "y": 7.476948717942902
       },
       "nextControl": {
-        "x": 5.2006403021249445,
-        "y": 7.445026807598285
+        "x": 5.258861175864147,
+        "y": 7.53026825411649
       },
       "isLocked": false,
       "linkedName": null
@@ -41,13 +41,13 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "neturaltoposition"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.65,
-      "rotationDegrees": 1.3691995594525566
+      "waypointRelativePos": 0.9859649122807016,
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [
@@ -80,7 +80,7 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "trench shoot",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -63.99665415548864
