@@ -11,9 +11,12 @@ import java.util.Queue;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
@@ -47,13 +50,13 @@ public class RobotContainer {
 
     private final SwerveRequest.FieldCentricFacingAngle locked_drive = new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            // .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+            // .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
 
     private final SwerveRequest.RobotCentric testdrive = new SwerveRequest.RobotCentric()
         .withDeadband(MaxSpeed* 0.1).withRotationalDeadband(MaxAngularRate*0.1)
-        // .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-            .withDriveRequestType(DriveRequestType.Velocity);
+        .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+            // .withDriveRequestType(DriveRequestType.Velocity);
     
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -72,11 +75,19 @@ public class RobotContainer {
     public final Hopper hopper =   new Hopper();
 
     public final Vision vision = new Vision(drivetrain);
+
+    private final SendableChooser<Command> autoChooser;
     
     public RobotContainer() {
         configureBindings();
         configureSystemsBindings();
         // name_commands();
+        autoChooser = AutoBuilder.buildAutoChooser();
+
+    // Another option that allows you to specify the default auto by its name
+    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+
+        SmartDashboard.putData("Auto Chooser", autoChooser);
 
     }
 
@@ -113,7 +124,7 @@ public class RobotContainer {
         drivestick.b().toggleOnTrue(drivetrain.applyRequest(() ->
                 locked_drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withHeadingPID(8,0, 0.5)
+                    .withHeadingPID(5,0, 0.01)
                     .withTargetDirection(new Rotation2d(drivetrain.get_target_angle()))
                     
                     )
@@ -122,7 +133,7 @@ public class RobotContainer {
         drivestick.x().toggleOnTrue(drivetrain.applyRequest(() ->
                 locked_drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withHeadingPID(8,0, 0.5)
+                    .withHeadingPID(5,0, 0.01)
                     .withTargetDirection(new Rotation2d(drivetrain.get_target_moving_angle()))
                     
                     )
@@ -132,31 +143,29 @@ public class RobotContainer {
         .whileTrue(new InstantCommand(intake::startRoller, intake));
         
         drivestick.povUp().and(intake::isDeployed).and(intake::roller_not_toggled)
-        .onFalse(new InstantCommand(intake::stopRoller, intake));
+        .onFalse(intake.delay_stopRoller_Command(0.5));
 
 
 
         drivestick.povUp().whileTrue(drivetrain.applyRequest(()->
-            testdrive.withVelocityX(MaxSpeed*0.3)
-            .withVelocityY(0)
+            testdrive.withVelocityX(MaxSpeed*0.3)            
             .withRotationalRate(-drivestick.getRightX() * MaxAngularRate)
-            ));
+            )).onFalse(drivetrain.applyRequest(()->testdrive.withVelocityX(0)).withTimeout(0.02));
         
         drivestick.povDown().whileTrue(drivetrain.applyRequest(()->
-            testdrive.withVelocityX(-MaxSpeed*0.3)
-            .withVelocityY(0)
+            testdrive.withVelocityX(-MaxSpeed*0.3)            
             .withRotationalRate(-drivestick.getRightX() * MaxAngularRate)
-            ));
+            )).onFalse(drivetrain.applyRequest(()->testdrive.withVelocityX(0)).withTimeout(0.02));
+
         drivestick.povLeft().whileTrue(drivetrain.applyRequest(()->
             testdrive.withVelocityY(MaxSpeed*0.3)
-            .withVelocityX(0)
             .withRotationalRate(-drivestick.getRightX() * MaxAngularRate)
-            ));
+            )).onFalse(drivetrain.applyRequest(()->testdrive.withVelocityY(0)).withTimeout(0.02));
+
         drivestick.povRight().whileTrue(drivetrain.applyRequest(()->
-            testdrive.withVelocityY(-MaxSpeed*0.3)
-            .withVelocityX(0)
+            testdrive.withVelocityY(-MaxSpeed*0.3)          
             .withRotationalRate(-drivestick.getRightX() * MaxAngularRate)
-            ));
+            )).onFalse(drivetrain.applyRequest(()->testdrive.withVelocityY(0)).withTimeout(0.02));
 
             // Drivetrain will execute this command periodically
             
@@ -212,6 +221,7 @@ public class RobotContainer {
 
         operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.get_auto_speed().plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
         ).onFalse(shooter.stopCommand());
+        
         operatorstick.rightTrigger().and(shooter::shooteratSpeed).and(shooter::shooterAimed)
         .whileTrue(new RepeatCommand(new InstantCommand(hopper::startHopper)))
         .whileTrue(new RepeatCommand(new InstantCommand(feeder::startFeeder)))
@@ -256,26 +266,31 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // Simple drive forward auton
         // final var idle = new SwerveRequest.Idle();
-        return Commands.sequence(
-            //(near the hub) 
-            // extract intake 
-            // wait 0.5 second
-            // set shooter speed 1000
-            // 
 
-            // intake.auto_extract_out_intake_command(),
-            new InstantCommand(intake::half_deploy), new WaitCommand(2),
-            shooter.autoshoot(),
-            feeder.auto_feeder_start(),
-            hopper.auto_start_hopper(),
-            new WaitCommand(3), 
-            intake.auto_intake_fuel_command(),  
-            new WaitCommand(5),
-            new InstantCommand(shooter::StopShooter, shooter),
-            feeder.auto_feeder_end(),
-            hopper.auto_stop_hopper(),
-            intake.auto_intake_fuel_stop()
-        );
+        // Pathpla
+        
+        return autoChooser.getSelected();
+
+    //     return Commands.sequence(
+    //         //(near the hub) 
+    //         // extract intake 
+    //         // wait 0.5 second
+    //         // set shooter speed 1000
+    //         // 
+            
+    //         // intake.auto_extract_out_intake_command(),
+    //         new InstantCommand(intake::half_deploy), new WaitCommand(2),
+    //         shooter.autoshoot(),
+    //         feeder.auto_feeder_start(),
+    //         hopper.auto_start_hopper(),
+    //         new WaitCommand(3), 
+    //         intake.auto_intake_fuel_command(),  
+    //         new WaitCommand(5),
+    //         new InstantCommand(shooter::StopShooter, shooter),
+    //         feeder.auto_feeder_end(),
+    //         hopper.auto_stop_hopper(),
+    //         intake.auto_intake_fuel_stop()
+    //     );
 
 
 

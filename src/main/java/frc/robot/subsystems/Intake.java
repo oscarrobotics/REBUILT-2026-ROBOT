@@ -74,7 +74,7 @@ public class Intake extends SubsystemBase
      private double targetVelocity = 0;
 
      //default feeder velocity 
-     private static final double default_velocity = 60.0;
+     private static final double default_velocity = 70.0;
 
       public Intake(){
 
@@ -164,6 +164,13 @@ public class Intake extends SubsystemBase
          m_intake_roller_motor.setControl(m_MagicVelocityVoltage.withVelocity(0));
          targetVelocityEntry.setDouble(0);
       }
+
+      public Command delay_stopRoller_Command(double delay) {
+         targetVelocity = 0;
+         return new WaitCommand(delay).andThen(new InstantCommand(this::stopRoller, this));
+         
+      }
+
 
       public void reverseRoller(){
          targetVelocity = -default_velocity;
