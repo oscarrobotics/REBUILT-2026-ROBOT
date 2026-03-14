@@ -14,6 +14,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.GenericEntry;
@@ -49,8 +50,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
-    public Pose2d red_hub = new Pose2d(4.65+5,4.05, new Rotation2d(0));///to be fixed
-    public Pose2d blue_hub = new Pose2d(4.65,4.05,new Rotation2d(0));
+    public Pose2d red_hub = new Pose2d(4.65+5,4.10, new Rotation2d(0));///to be fixed
+    public Pose2d blue_hub = new Pose2d(4.65,4.10,new Rotation2d(0));
 
 
     
@@ -292,6 +293,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return angle_to_target;
     }
 
+    
+
 
      public Distance get_target_distance(){
           //calculate the distance from the shooter to appropriately colored hub
@@ -316,6 +319,68 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         }
 
+
+        public Angle get_target_moving_angle(){
+
+        double shooter_delay = -1;
+        //calculate the angle from the shooter to appropriately colored hub
+
+        //var alliance = getalliancecolor();
+        var alliance = "Blue";
+        Angle angle_to_target = Degree.of(0);
+        
+        // Translation2d red_hub = new Translation2d((-4.249-3.041)/2.0,4.05);
+        // Translation2d blue_hub = new Translation2d((4.249+3.041)/2.0,4.05);
+        
+        //  distance = getpose.minus(redhub).magnitude;
+
+        Pose2d offset_hub = blue_hub;
+        
+        Transform2d speed_offset = new Transform2d(getState().Speeds.vxMetersPerSecond*shooter_delay,getState().Speeds.vxMetersPerSecond*shooter_delay,new Rotation2d(0));
+        offset_hub = offset_hub.plus(speed_offset);
+
+        if (alliance == "Blue"){
+           Pose2d pose = samplePoseNow();
+
+            angle_to_target = pose.relativeTo(offset_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(180));
+
+            if (angle_to_target.in(Degree) > 180){
+                angle_to_target = angle_to_target.minus(Degree.of(360));
+            }   
+
+        }
+        
+        return angle_to_target;
+    }
+
+    public Distance get_target_moving_distance(){
+          //calculate the distance from the shooter to appropriately colored hub
+
+          //var alliance = getalliancecolor();
+          var alliance = "Blue";
+          Distance target_distance = Meters.of(0);
+
+        Pose2d offset_hub = blue_hub;
+        
+        double shooter_delay = -1;
+        Transform2d speed_offset = new Transform2d(getState().Speeds.vxMetersPerSecond*shooter_delay,getState().Speeds.vxMetersPerSecond*shooter_delay,new Rotation2d(0));
+        offset_hub = offset_hub.plus(speed_offset);
+          
+   
+
+          if (alliance == "Blue"){
+             Pose2d pose = samplePoseNow();
+
+             double offset = pose.relativeTo(offset_hub).getTranslation().getNorm();
+              target_distance = Meters.of(offset);
+
+          }
+
+
+
+          return target_distance;
+
+        }
 
     /**
      * Runs the SysId Quasistatic test in the given direction for the routine

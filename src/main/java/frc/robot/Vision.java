@@ -77,7 +77,7 @@ public class Vision {
         boolean reject_update = false;
 
 
-        if (Math.abs(m_poseEstimator.getPigeon2().getYaw().getValueAsDouble())>360){ //if the robot is rotating faster than 360 degrees per second, ignore vision measurements to prevent pose estimator from diverging
+        if (Math.abs(m_poseEstimator.getPigeon2().getAngularVelocityZWorld().getValueAsDouble())>360){ //if the robot is rotating faster than 360 degrees per second, ignore vision measurements to prevent pose estimator from diverging
         
             reject_update = true;
         }

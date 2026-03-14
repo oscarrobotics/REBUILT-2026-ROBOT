@@ -74,7 +74,7 @@ public class Intake extends SubsystemBase
      private double targetVelocity = 0;
 
      //default feeder velocity 
-     private static final double default_velocity = 80.0;
+     private static final double default_velocity = 60.0;
 
       public Intake(CommandSwerveDrivetrain pose_estimator){
 
@@ -172,6 +172,14 @@ public class Intake extends SubsystemBase
          m_intake_roller_motor.setControl(m_MagicVelocityVoltage.withVelocity(-default_velocity));
       }
       
+      public boolean roller_toggled(){
+         return roller_on;
+      }
+
+      public boolean roller_not_toggled(){
+         return !roller_on;
+      }
+
       private boolean roller_on =  false;
       
       
@@ -188,6 +196,9 @@ public class Intake extends SubsystemBase
 
       }
 
+      public boolean isDeployed(){
+         return arm_out;
+      }
       // public void startIntake() {
       //    targetVelocity = default_velocity;
       //    targetVelocityEntry.setDouble(targetVelocity);
@@ -203,12 +214,14 @@ public class Intake extends SubsystemBase
 
       //extending out intake 
       public void extendArm(){
+         arm_out = true;
         m_intake_arm_motor.setControl(m_position_request.withPosition(arm_delta));
       //   System.out.println("arm out");
       }
 
       //extending in intake
       public void retractArm(){
+         arm_out = false;
         m_intake_arm_motor.setControl(m_position_request.withPosition(0));
       //   System.out.println("arm in");
       }
@@ -218,11 +231,11 @@ public class Intake extends SubsystemBase
       public void toggle_arm(){
 
         if (arm_out){
-            arm_out = false;
+            
             this.retractArm();
         }
         else{
-            arm_out = true;
+            
             this.extendArm();
         }
 
@@ -351,6 +364,10 @@ public class Intake extends SubsystemBase
          new WaitCommand(1)
 
       );
+   }
+
+   public void set_position_as_out(){
+      m_intake_arm_motor.setPosition(arm_delta.in(Rotations));
    }
 
 
