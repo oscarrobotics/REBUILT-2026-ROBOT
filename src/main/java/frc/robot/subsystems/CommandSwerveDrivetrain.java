@@ -10,11 +10,19 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.controllers.PPLTVController;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.GenericEntry;
@@ -25,6 +33,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -198,6 +207,60 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
     }
 
+
+    void configure_autobuilder(){
+        ModuleConfig defaultconfig = new ModuleConfig(null, null, m_drivetrainId, null, null, kNumConfigAttempts);
+        RobotConfig config = new RobotConfig(1,1,defaultconfig, 1);
+    try{
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+      
+    }
+    
+    SwerveRequest.ApplyRobotSpeeds auto_drive = new SwerveRequest.ApplyRobotSpeeds();
+    
+    // Configure AutoBuilder last
+    AutoBuilder.configure(
+            this::samplePoseNow, // Robot pose supplier
+            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::get_chasis_speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, feedforwards) ->{
+                auto_drive.withSpeeds(speeds)
+                .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())
+                .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY());
+            } 
+            , // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+            ), // PPLTVController is the built in path following controller for differential drive trains
+            config, // The robot configuration
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
+    }
+
+    ChassisSpeeds get_chasis_speeds(){
+        return getKinematics().toChassisSpeeds(
+            getModule(0).getCurrentState(),
+            getModule(1).getCurrentState(),
+            getModule(2).getCurrentState(),
+            getModule(3).getCurrentState()
+            );
+        
+    }
     /**
      * Returns a command that applies the specified control request to this swerve drivetrain.
      *
@@ -211,18 +274,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public AngularVelocity get_rate_to_lock(){
         AngularVelocity rate = RotationsPerSecond.of(0.75);
 
-        var alliance = "Blue";
+        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
         // calculate angle to hub
         
           //  distance = getpose.minus(redhub).magnitude;
         Angle offset = Degree.of(0);
-        if (alliance == "Blue"){
-
-
-            offset = get_target_angle_differnce();
-            
+        if (alliance.equals(Alliance.Blue)){
 
         }
+
+            
+            
+        offset = get_target_angle_differnce();
         // calculate rate
         rate = rate.times(5*offset.div(-180).in(Degree));
 
@@ -246,7 +309,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         //calculate the angle from the shooter to appropriately colored hub
 
         //var alliance = getalliancecolor();
-        var alliance = "Blue";
+        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
         Angle angle_differnce = Degree.of(0);
         
         // Translation2d red_hub = new Translation2d((-4.249-3.041)/2.0,4.05);
@@ -254,12 +317,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         
         //  distance = getpose.minus(redhub).magnitude;
 
-        if (alliance == "Blue"){
-           Pose2d pose = samplePoseNow();
+        // if (alliance.equals(Alliance.Blue)){
+           
+
+        // }
+        Pose2d pose = samplePoseNow();
 
             angle_differnce = samplePoseNow().getRotation().getMeasure().minus(get_target_angle());
-
-        }
 
         return angle_differnce;
     }
@@ -271,7 +335,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         //calculate the angle from the shooter to appropriately colored hub
 
         //var alliance = getalliancecolor();
-        var alliance = "Blue";
+        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
         Angle angle_to_target = Degree.of(0);
         
         // Translation2d red_hub = new Translation2d((-4.249-3.041)/2.0,4.05);
@@ -279,15 +343,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         
         //  distance = getpose.minus(redhub).magnitude;
 
-        if (alliance == "Blue"){
-           Pose2d pose = samplePoseNow();
+        Pose2d pose = samplePoseNow();
+        if (alliance.equals(Alliance.Blue)){
 
             angle_to_target = pose.relativeTo(blue_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(180));
+        }
+        else {
+            
+            angle_to_target = pose.relativeTo(red_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(180));
+        }
+   
 
-            if (angle_to_target.in(Degree) > 180){
+
+
+        if (angle_to_target.in(Degree) > 180){
                 angle_to_target = angle_to_target.minus(Degree.of(360));
-            }   
-
         }
         
         return angle_to_target;
@@ -300,33 +370,35 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           //calculate the distance from the shooter to appropriately colored hub
 
           //var alliance = getalliancecolor();
-          var alliance = "Blue";
+          Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
           Distance target_distance = Meters.of(0);
           
    
 
-          if (alliance == "Blue"){
-             Pose2d pose = samplePoseNow();
+          Pose2d pose = samplePoseNow();
+          if (alliance.equals(Alliance.Blue)){
 
              double offset = pose.relativeTo(blue_hub).getTranslation().getNorm();
-              target_distance = Meters.of(offset);
-
-          }
-
-
+             target_distance = Meters.of(offset);
+             
+            }
+        else{
+            double offset = pose.relativeTo(red_hub).getTranslation().getNorm();
+            target_distance = Meters.of(offset);
+        } 
 
           return target_distance;
 
         }
 
 
-        public Angle get_target_moving_angle(){
+    public Angle get_target_moving_angle(){
 
         double shooter_delay = -1;
         //calculate the angle from the shooter to appropriately colored hub
 
         //var alliance = getalliancecolor();
-        var alliance = "Blue";
+        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
         Angle angle_to_target = Degree.of(0);
         
         // Translation2d red_hub = new Translation2d((-4.249-3.041)/2.0,4.05);
@@ -339,16 +411,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         Transform2d speed_offset = new Transform2d(getState().Speeds.vxMetersPerSecond*shooter_delay,getState().Speeds.vxMetersPerSecond*shooter_delay,new Rotation2d(0));
         offset_hub = offset_hub.plus(speed_offset);
 
-        if (alliance == "Blue"){
+        if (alliance.equals(Alliance.Blue)){
            Pose2d pose = samplePoseNow();
-
-            angle_to_target = pose.relativeTo(offset_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(180));
-
-            if (angle_to_target.in(Degree) > 180){
-                angle_to_target = angle_to_target.minus(Degree.of(360));
-            }   
-
+           
+           angle_to_target = pose.relativeTo(offset_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(180));
         }
+        else{
+           
+        }
+            
+
+        if (angle_to_target.in(Degree) > 180){
+            angle_to_target = angle_to_target.minus(Degree.of(360));
+        }   
         
         return angle_to_target;
     }
@@ -357,30 +432,38 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           //calculate the distance from the shooter to appropriately colored hub
 
           //var alliance = getalliancecolor();
-          var alliance = "Blue";
-          Distance target_distance = Meters.of(0);
-
-        Pose2d offset_hub = blue_hub;
         
+        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+        //   var alliance = "Blue";
+        // Distance target_hub_distance = Meters.of(0);       
         double shooter_delay = -1;
-        Transform2d speed_offset = new Transform2d(getState().Speeds.vxMetersPerSecond*shooter_delay,getState().Speeds.vxMetersPerSecond*shooter_delay,new Rotation2d(0));
-        offset_hub = offset_hub.plus(speed_offset);
-          
-   
-
-          if (alliance == "Blue"){
-             Pose2d pose = samplePoseNow();
-
-             double offset = pose.relativeTo(offset_hub).getTranslation().getNorm();
-              target_distance = Meters.of(offset);
-
-          }
-
-
-
-          return target_distance;
+    
+        Pose2d offset_hub = red_hub;
+        
+        if (alliance.equals(Alliance.Blue)){
+            offset_hub = blue_hub;
+            
 
         }
+        else{
+            offset_hub = red_hub;
+        }
+          
+
+        Transform2d speed_offset = new Transform2d(getState().Speeds.vxMetersPerSecond*shooter_delay,getState().Speeds.vxMetersPerSecond*shooter_delay,new Rotation2d(0));
+        
+        offset_hub = offset_hub.plus(speed_offset);
+          
+        Pose2d pose = samplePoseNow();
+
+        double offset = pose.relativeTo(offset_hub).getTranslation().getNorm();
+        
+        Distance target_hub_distance = Meters.of(offset);
+
+
+        return target_hub_distance;
+
+    };
 
     /**
      * Runs the SysId Quasistatic test in the given direction for the routine

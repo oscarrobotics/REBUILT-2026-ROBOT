@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -52,13 +53,13 @@ public class RobotContainer {
 
     private final SwerveRequest.FieldCentricFacingAngle locked_drive = new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            // .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+            // .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
 
     private final SwerveRequest.RobotCentric testdrive = new SwerveRequest.RobotCentric()
         .withDeadband(MaxSpeed* 0.1).withRotationalDeadband(MaxAngularRate*0.1)
-        // .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-            .withDriveRequestType(DriveRequestType.Velocity);
+        .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+            // .withDriveRequestType(DriveRequestType.Velocity);
     
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -125,7 +126,7 @@ public class RobotContainer {
         drivestick.b().toggleOnTrue(drivetrain.applyRequest(() ->
                 locked_drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withHeadingPID(8,0, 0.5)
+                    .withHeadingPID(5,0, 0.01)
                     .withTargetDirection(new Rotation2d(drivetrain.get_target_angle()))
                     
                     )
@@ -134,7 +135,7 @@ public class RobotContainer {
         drivestick.x().toggleOnTrue(drivetrain.applyRequest(() ->
                 locked_drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withHeadingPID(8,0, 0.5)
+                    .withHeadingPID(5,0, 0.01)
                     .withTargetDirection(new Rotation2d(drivetrain.get_target_moving_angle()))
                     
                     )
@@ -144,31 +145,29 @@ public class RobotContainer {
         .whileTrue(new InstantCommand(intake::startRoller, intake));
         
         drivestick.povUp().and(intake::isDeployed).and(intake::roller_not_toggled)
-        .onFalse(new InstantCommand(intake::stopRoller, intake));
+        .onFalse(intake.delay_stopRoller_Command(0.5));
 
 
 
         drivestick.povUp().whileTrue(drivetrain.applyRequest(()->
-            testdrive.withVelocityX(MaxSpeed*0.3)
-            .withVelocityY(0)
+            testdrive.withVelocityX(MaxSpeed*0.3)            
             .withRotationalRate(-drivestick.getRightX() * MaxAngularRate)
-            ));
+            )).onFalse(drivetrain.applyRequest(()->testdrive.withVelocityX(0)).withTimeout(0.02));
         
         drivestick.povDown().whileTrue(drivetrain.applyRequest(()->
-            testdrive.withVelocityX(-MaxSpeed*0.3)
-            .withVelocityY(0)
+            testdrive.withVelocityX(-MaxSpeed*0.3)            
             .withRotationalRate(-drivestick.getRightX() * MaxAngularRate)
-            ));
+            )).onFalse(drivetrain.applyRequest(()->testdrive.withVelocityX(0)).withTimeout(0.02));
+
         drivestick.povLeft().whileTrue(drivetrain.applyRequest(()->
             testdrive.withVelocityY(MaxSpeed*0.3)
-            .withVelocityX(0)
             .withRotationalRate(-drivestick.getRightX() * MaxAngularRate)
-            ));
+            )).onFalse(drivetrain.applyRequest(()->testdrive.withVelocityY(0)).withTimeout(0.02));
+
         drivestick.povRight().whileTrue(drivetrain.applyRequest(()->
-            testdrive.withVelocityY(-MaxSpeed*0.3)
-            .withVelocityX(0)
+            testdrive.withVelocityY(-MaxSpeed*0.3)          
             .withRotationalRate(-drivestick.getRightX() * MaxAngularRate)
-            ));
+            )).onFalse(drivetrain.applyRequest(()->testdrive.withVelocityY(0)).withTimeout(0.02));
 
             // Drivetrain will execute this command periodically
             
@@ -227,6 +226,7 @@ public class RobotContainer {
 
         operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.get_auto_speed().plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
         ).onFalse(shooter.stopCommand());
+        
         operatorstick.rightTrigger().and(shooter::shooteratSpeed).and(shooter::shooterAimed)
         .whileTrue(new RepeatCommand(new InstantCommand(hopper::startHopper)))
         .whileTrue(new RepeatCommand(new InstantCommand(feeder::startFeeder)))
