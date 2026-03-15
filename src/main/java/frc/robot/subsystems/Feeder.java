@@ -40,6 +40,7 @@ public class Feeder extends SubsystemBase
      private final GenericEntry kAEntry = tab.add("kA", 0.01).getEntry();
      private final GenericEntry targetVelocityEntry = tab.add("Target Velocity (RPS)", 0).getEntry();
      private final GenericEntry currentVelocityEntry = tab.add("Current Velocity (RPS)", 0).getEntry();
+     private final GenericEntry motorTemperatureEntry = tab.add("Motor Temperature (C)", 0).getEntry();
 
      //intializing closed-loop target velocity
      private double targetVelocity = 0;
@@ -151,7 +152,7 @@ public class Feeder extends SubsystemBase
           //updating current velocity 
           currentVelocityEntry.setDouble(
                   m_feeder_motor.getRotorVelocity().getValueAsDouble());
-          
+          motorTemperatureEntry.setDouble(m_feeder_motor.getDeviceTemp().getValueAsDouble());
       }
       
    }

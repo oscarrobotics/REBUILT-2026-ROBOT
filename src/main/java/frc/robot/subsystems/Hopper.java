@@ -43,6 +43,7 @@ public class Hopper extends SubsystemBase
      private final GenericEntry kAEntry = tab.add("kA", 0.01).getEntry();
      private final GenericEntry targetVelocityEntry = tab.add("Target Velocity (RPS)", 0).getEntry();
      private final GenericEntry currentVelocityEntry = tab.add("Current Velocity (RPS)", 0).getEntry();
+    private final GenericEntry motorTemperatureEntry = tab.add("Motor Temperature (C)", 0).getEntry();
 
      //intializing closed-loop target velocity
      private AngularVelocity targetVelocity = RPM.of(0);
@@ -149,6 +150,8 @@ public class Hopper extends SubsystemBase
           //updating current velocity 
           currentVelocityEntry.setDouble(
                   m_hopper_motor.getRotorVelocity().getValueAsDouble());
+
+        motorTemperatureEntry.setDouble(m_hopper_motor.getDeviceTemp().getValueAsDouble());
           
       }
       

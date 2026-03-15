@@ -11,15 +11,39 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "autointakefuel"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "1 - pick up fuel from depot"
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "autointakefuelstop"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "1 - depot to hub"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoshoot"
           }
         },
         {
@@ -38,6 +62,24 @@
           "type": "path",
           "data": {
             "pathName": "1e - neutral zone pick up balls"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autointakefuel"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1e - balls"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autointakefuelstop"
           }
         }
       ]

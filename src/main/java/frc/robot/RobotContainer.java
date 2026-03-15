@@ -80,14 +80,15 @@ public class RobotContainer {
     public final Vision vision = new Vision(drivetrain);
 
     
-    // private final SendableChooser<Command> autoChooser;
+    private final SendableChooser<Command> autoChooser;
     
     public RobotContainer() {
         configureBindings();
         configureSystemsBindings();
         name_commands();
-        // autoChooser = AutoBuilder.buildAutoChooser("auto paths");
-        // Shuffleboard.getTab("autonomouspath").add(autoChooser);
+        drivetrain.configure_autobuilder();
+        autoChooser = AutoBuilder.buildAutoChooser("auto paths");
+        Shuffleboard.getTab("autonomouspath").add(autoChooser);
 
         
 

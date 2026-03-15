@@ -23,11 +23,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
 
-    private final Timer m_timer = new Timer();
-    private ShuffleboardTab m_ShuffleboardTab;
-    private GenericEntry m_phase;
-    private GenericEntry m_time;
-    
+  
     private Command m_autonomousCommand;
 
     private final RobotContainer m_robotContainer;
@@ -43,7 +39,7 @@ public class Robot extends TimedRobot {
         
     }
 
-    
+
 
     @Override
     public void robotPeriodic() {
