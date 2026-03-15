@@ -70,6 +70,9 @@ public class Intake extends SubsystemBase
      private final GenericEntry targetVelocityEntry = tab.add("Target Velocity (RPS)", 0).getEntry();
      private final GenericEntry currentVelocityEntry = tab.add("Current Velocity (RPS)", 0).getEntry();
 
+     private final GenericEntry roller_motorTemperatureEntry = tab.add("Roller Motor Temperature (C)", 0).getEntry();  
+     private final GenericEntry arm_motorTemperatureEntry = tab.add("Arm Motor Temperature (C)", 0).getEntry();
+
      //intializing closed-loop target velocity
      private double targetVelocity = 0;
 
@@ -395,6 +398,9 @@ public class Intake extends SubsystemBase
         SmartDashboard.putNumber("Intake Acceleration", acceleration);
         SmartDashboard.putNumber("Intake Position", position);
 
+
+        roller_motorTemperatureEntry.setDouble(m_intake_roller_motor.getDeviceTemp().getValueAsDouble());
+        arm_motorTemperatureEntry.setDouble(m_intake_arm_motor.getDeviceTemp().getValueAsDouble());
         
     }
    }

@@ -1,0 +1,318 @@
+{
+  "NetworkTables": {
+    "Retained Values": {
+      "open": false
+    },
+    "transitory": {
+      "DriveState": {
+        "ChassisSpeeds##v_/DriveState/Speeds": {
+          "open": true
+        },
+        "Pose2d##v_/DriveState/Pose": {
+          "open": true
+        }
+      },
+      "LiveWindow": {
+        "open": true
+      },
+      "Shuffleboard": {
+        "DriveTrain": {
+          "open": true
+        },
+        "open": true
+      },
+      "SmartDashboard": {
+        "open": true
+      },
+      "limelight": {
+        "open": true
+      }
+    },
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Pose": "Field2d",
+      "/Shuffleboard/autonomouspath/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/Module 0": "Mechanism2d",
+      "/SmartDashboard/Module 1": "Mechanism2d",
+      "/SmartDashboard/Module 2": "Mechanism2d",
+      "/SmartDashboard/Module 3": "Mechanism2d",
+      "/SmartDashboard/PathPlanner": "Alerts"
+    }
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "127.0.0.1"
+  },
+  "Plots": {
+    "Plot <0>": {
+      "plots": [
+        {
+          "backgroundColor": [
+            0.0,
+            0.0,
+            0.0,
+            0.8500000238418579
+          ],
+          "height": 315,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/DriveState/Speeds/vx"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/DriveState/Speeds/vy"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/DriveState/Speeds/omega"
+            }
+          ]
+        }
+      ]
+    },
+    "Plot <1>": {
+      "plots": [
+        {
+          "backgroundColor": [
+            0.0,
+            0.0,
+            0.0,
+            0.8500000238418579
+          ],
+          "height": 303,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Shooter/Target Speed (RPM)"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Shooter/Leader RPM"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Shooter/Target Distance (m)"
+            }
+          ]
+        }
+      ]
+    },
+    "Plot <2>": {
+      "plots": [
+        {
+          "backgroundColor": [
+            0.0,
+            0.0,
+            0.0,
+            0.8500000238418579
+          ],
+          "height": 338,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Shooter/ Leader Motor Temperature (C)"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Shooter/Follower Motor Temperature (C)"
+            }
+          ]
+        }
+      ]
+    },
+    "Plot <3>": {
+      "plots": [
+        {
+          "backgroundColor": [
+            0.0,
+            0.0,
+            0.0,
+            0.8500000238418579
+          ],
+          "height": 338,
+          "series": [
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Hopper/Motor Temperature (C)"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Feeder/Motor Temperature (C)"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Intake/Arm Motor Temperature (C)"
+            },
+            {
+              "color": [
+                0.7686275243759155,
+                0.30588236451148987,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Intake/Roller Motor Temperature (C)"
+            }
+          ]
+        }
+      ]
+    },
+    "Plot <4>": {
+      "plots": [
+        {
+          "backgroundColor": [
+            0.0,
+            0.0,
+            0.0,
+            0.8500000238418579
+          ],
+          "height": 338,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/DriveTrain/BL Drive Load Ratio"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/DriveTrain/BR Drive Load Ratio"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/DriveTrain/FR Drive Load Ratio"
+            },
+            {
+              "color": [
+                0.7686275243759155,
+                0.30588236451148987,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/DriveTrain/FL Drive Load Ratio"
+            }
+          ]
+        }
+      ]
+    },
+    "Plot <5>": {
+      "plots": [
+        {
+          "backgroundColor": [
+            0.0,
+            0.0,
+            0.0,
+            0.8500000238418579
+          ],
+          "height": 338,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/DriveTrain/BL Drive Motor Temperature (C)"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/DriveTrain/BR Drive Motor Temperature (C)"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/DriveTrain/FL Drive Motor Temperature (C)"
+            },
+            {
+              "color": [
+                0.7686275243759155,
+                0.30588236451148987,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/DriveTrain/FR Drive Motor Temperature (C)"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

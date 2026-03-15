@@ -85,6 +85,9 @@ public class Shooter extends SubsystemBase{
      
      private final GenericEntry motorvoltageEntry = tab.add("Motor Voltage", 0.0).getEntry();
      private final GenericEntry motorCurrentEntry = tab.add("Motor Current", 0.0).getEntry();
+     private final GenericEntry motorTemperatureEntry = tab.add(" Leader Motor Temperature (C)", 0.0).getEntry();
+     private final GenericEntry followerMotorTemperatureEntry = tab.add("Follower Motor Temperature (C)", 0.0).getEntry();
+     
      
      
 
@@ -279,6 +282,9 @@ public class Shooter extends SubsystemBase{
         angleDelta.setDouble(m_poseEstimator.get_target_angle_differnce().in(Degree));
         motorvoltageEntry.setDouble(m_shooterleader.getAppliedOutput()*12);
         motorCurrentEntry.setDouble(m_shooterleader.getOutputCurrent());
+
+        motorTemperatureEntry.setDouble(m_shooterleader.getMotorTemperature());
+        followerMotorTemperatureEntry.setDouble(m_shooterfollower.getMotorTemperature());
 
 
      }

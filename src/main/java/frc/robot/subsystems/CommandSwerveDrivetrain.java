@@ -34,6 +34,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -63,7 +65,34 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Pose2d red_hub = new Pose2d(4.65+5,4.10, new Rotation2d(0));///to be fixed
     public Pose2d blue_hub = new Pose2d(4.65,4.10,new Rotation2d(0));
 
+    Pose2d prevPose2d = new Pose2d();
 
+
+    private final ShuffleboardTab tab = Shuffleboard.getTab("DriveTrain");
+    private final GenericEntry FR_drive_motorTemperatureEntry = tab.add("FR Drive Motor Temperature (C)", 0).getEntry();  
+    private final GenericEntry FL_drive_motorTemperatureEntry = tab.add("FL Drive Motor Temperature (C)", 0).getEntry();
+    private final GenericEntry BL_drive_motorTemperatureEntry = tab.add("BL Drive Motor Temperature (C)", 0).getEntry();
+    private final GenericEntry BR_drive_motorTemperatureEntry = tab.add("BR Drive Motor Temperature (C)", 0).getEntry();
+
+    private final GenericEntry FR_steer_motorTemperatureEntry = tab.add("FR Steer Motor Temperature (C)", 0).getEntry();    
+    private final GenericEntry FL_steer_motorTemperatureEntry = tab.add("FL Steer Motor Temperature (C)", 0).getEntry();
+    private final GenericEntry BL_steer_motorTemperatureEntry = tab.add("BL Steer Motor Temperature (C)", 0).getEntry();
+    private final GenericEntry BR_steer_motorTemperatureEntry = tab.add("BR Steer Motor Temperature (C)", 0).getEntry();
+
+    private final GenericEntry FR_drive_currentEntry = tab.add("FR Drive Current (A)", 0).getEntry();
+    private final GenericEntry FL_drive_currentEntry = tab.add("FL Drive Current (A)", 0).getEntry();
+    private final GenericEntry BL_drive_currentEntry = tab.add("BL Drive Current (A)", 0).getEntry();
+    private final GenericEntry BR_drive_currentEntry = tab.add("BR Drive Current (A)", 0).getEntry();
+
+    private final GenericEntry FR_steer_currentEntry = tab.add("FR Steer Current (A)", 0).getEntry();   
+    private final GenericEntry FL_steer_currentEntry = tab.add("FL Steer Current (A)", 0).getEntry();
+    private final GenericEntry BL_steer_currentEntry = tab.add("BL Steer Current (A)", 0).getEntry();
+    private final GenericEntry BR_steer_currentEntry = tab.add("BR Steer Current (A)", 0).getEntry();
+
+    private final GenericEntry FR_drive_loadRatioEntry = tab.add("FR Drive Load Ratio", 0).getEntry();
+    private final GenericEntry FL_drive_loadRatioEntry = tab.add("FL Drive Load Ratio", 0).getEntry();
+    private final GenericEntry BL_drive_loadRatioEntry = tab.add("BL Drive Load Ratio", 0).getEntry();
+    private final GenericEntry BR_drive_loadRatioEntry = tab.add("BR Drive Load Ratio", 0).getEntry();
     
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -228,11 +257,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             this::samplePoseNow, // Robot pose supplier
             this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
             this::get_chasis_speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) ->{
+            (speeds, feedforwards) ->{ this.applyRequest(() -> 
                 auto_drive.withSpeeds(speeds)
                 .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())
-                .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY());
-            } 
+                .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY())
+            );
+            }
             , // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
                     new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
@@ -512,7 +542,30 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         //     });
         // }
 
-     
+        FR_drive_motorTemperatureEntry.setDouble(getModule(0).getDriveMotor().getDeviceTemp().getValueAsDouble());
+        FL_drive_motorTemperatureEntry.setDouble(getModule(1).getDriveMotor().getDeviceTemp().getValueAsDouble());
+        BL_drive_motorTemperatureEntry.setDouble(getModule(2).getDriveMotor().getDeviceTemp().getValueAsDouble());
+        BR_drive_motorTemperatureEntry.setDouble(getModule(3).getDriveMotor().getDeviceTemp().getValueAsDouble());
+
+        FR_steer_motorTemperatureEntry.setDouble(getModule(0).getSteerMotor().getDeviceTemp().getValueAsDouble());
+        FL_steer_motorTemperatureEntry.setDouble(getModule(1).getSteerMotor().getDeviceTemp().getValueAsDouble());
+        BL_steer_motorTemperatureEntry.setDouble(getModule(2).getSteerMotor().getDeviceTemp().getValueAsDouble());
+        BR_steer_motorTemperatureEntry.setDouble(getModule(3).getSteerMotor().getDeviceTemp().getValueAsDouble());      
+
+        FR_drive_currentEntry.setDouble(getModule(0).getDriveMotor().getStatorCurrent().getValueAsDouble());
+        FL_drive_currentEntry.setDouble(getModule(1).getDriveMotor().getStatorCurrent().getValueAsDouble());
+        BL_drive_currentEntry.setDouble(getModule(2).getDriveMotor().getStatorCurrent().getValueAsDouble());
+        BR_drive_currentEntry.setDouble(getModule(3).getDriveMotor().getStatorCurrent().getValueAsDouble());    
+
+        FR_steer_currentEntry.setDouble(getModule(0).getSteerMotor().getStatorCurrent().getValueAsDouble());
+        FL_steer_currentEntry.setDouble(getModule(1).getSteerMotor().getStatorCurrent().getValueAsDouble());
+        BL_steer_currentEntry.setDouble(getModule(2).getSteerMotor().getStatorCurrent().getValueAsDouble());
+        BR_steer_currentEntry.setDouble(getModule(3).getSteerMotor().getStatorCurrent().getValueAsDouble());    
+
+        FR_drive_loadRatioEntry.setDouble(getModule(0).getDriveMotor().getStatorCurrent().getValueAsDouble() / getModule(0).getDriveMotor().getMotorVoltage().getValueAsDouble());
+        FL_drive_loadRatioEntry.setDouble(getModule(1).getDriveMotor().getStatorCurrent().getValueAsDouble() / getModule(1).getDriveMotor().getMotorVoltage().getValueAsDouble());
+        BL_drive_loadRatioEntry.setDouble(getModule(2).getDriveMotor().getStatorCurrent().getValueAsDouble() / getModule(2).getDriveMotor().getMotorVoltage().getValueAsDouble());
+        BR_drive_loadRatioEntry.setDouble(getModule(3).getDriveMotor().getStatorCurrent().getValueAsDouble() / getModule(3).getDriveMotor().getMotorVoltage().getValueAsDouble());
 
     }
 
@@ -576,7 +629,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
     }
 
-    Pose2d prevPose2d = new Pose2d();
+    
     public Pose2d samplePoseNow(){
         prevPose2d = super.samplePoseAt(Utils.getCurrentTimeSeconds()).orElse(prevPose2d);
         return prevPose2d;
