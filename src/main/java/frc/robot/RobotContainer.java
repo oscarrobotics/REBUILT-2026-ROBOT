@@ -80,14 +80,14 @@ public class RobotContainer {
     public final Vision vision = new Vision(drivetrain);
 
     
-    private final SendableChooser<Command> autoChooser;
+    // private final SendableChooser<Command> autoChooser;
     
     public RobotContainer() {
         configureBindings();
         configureSystemsBindings();
         name_commands();
-        autoChooser = AutoBuilder.buildAutoChooser("auto paths");
-        Shuffleboard.getTab("autonomouspath").add(autoChooser);
+        // autoChooser = AutoBuilder.buildAutoChooser("auto paths");
+        // Shuffleboard.getTab("autonomouspath").add(autoChooser);
 
         
 
@@ -227,20 +227,13 @@ public class RobotContainer {
         operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.get_auto_speed().plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
         ).onFalse(shooter.stopCommand());
         
-        operatorstick.rightTrigger().and(shooter::shooteratSpeed).and(shooter::shooterAimed)
+        operatorstick.rightTrigger().and(shooter::shooteratSpeed).and(shooter::shooterAimed).and(()->!operatorstick.leftBumper().getAsBoolean())
         .whileTrue(new RepeatCommand(new InstantCommand(hopper::startHopper)))
         .whileTrue(new RepeatCommand(new InstantCommand(feeder::startFeeder)))
         .onFalse(new InstantCommand(hopper::stopHopper)).onFalse(new InstantCommand(feeder::stopFeeder));
 
 
-
-
-
-        operatorstick.rightTrigger().and(shooter::shooteratSpeed).and( shooter::shooterAimed)
-            .whileTrue(new RepeatCommand(new InstantCommand(feeder::startFeeder, feeder) ))
-            .whileTrue(new RepeatCommand( new InstantCommand(hopper::startHopper, hopper)))
-            .onFalse(new InstantCommand(hopper::stopHopper, hopper))
-            .onFalse(new InstantCommand(feeder::stopFeeder, feeder));
+        
 
 
         operatorstick.povUp().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.close_speed;})); //near hub
@@ -252,7 +245,7 @@ public class RobotContainer {
 
 
         //Feeder Controls
-        operatorstick.rightBumper().onTrue(new InstantCommand(feeder::startFeeder, feeder)).onFalse(new InstantCommand(feeder::stopFeeder, feeder));
+        operatorstick.rightBumper().whileTrue(new InstantCommand(feeder::startFeeder, feeder)).onFalse(new InstantCommand(feeder::stopFeeder, feeder));
         
         //Hopper Controls
         operatorstick.rightBumper().whileTrue(new RepeatCommand( new InstantCommand(hopper::startHopper, hopper))).onFalse(new InstantCommand(hopper::stopHopper, hopper));
@@ -295,30 +288,30 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
 
-        return autoChooser.getSelected();
+        // return autoChooser.getSelected();
         // Simple drive forward auton
         // final var idle = new SwerveRequest.Idle();
-       // return Commands.sequence(
-            //(near the hub) 
+       return Commands.sequence(
+            // (near the hub) 
             // extract intake 
             // wait 0.5 second
             // set shooter speed 1000
-            // 
+            
 
-        //     // intake.auto_extract_out_intake_command(),
-        //     new InstantCommand(intake::half_deploy), new WaitCommand(2),
-        //     shooter.autoshoot(),
-        //     feeder.auto_feeder_start(),
-        //     hopper.auto_start_hopper(),
-        //     new WaitCommand(3), 
-        //     intake.auto_intake_fuel_command(),  
-        //     new WaitCommand(5),
-        //     new InstantCommand(shooter::StopShooter, shooter),
-        //     feeder.auto_feeder_end(),
-        //     hopper.auto_stop_hopper(),
-        //     intake.auto_intake_fuel_stop()
+            // intake.auto_extract_out_intake_command(),
+            new InstantCommand(intake::half_deploy), new WaitCommand(2),
+            shooter.autoshoot(),
+            feeder.auto_feeder_start(),
+            hopper.auto_start_hopper(),
+            new WaitCommand(3), 
+            intake.auto_intake_fuel_command(),  
+            new WaitCommand(5),
+            new InstantCommand(shooter::StopShooter, shooter),
+            feeder.auto_feeder_end(),
+            hopper.auto_stop_hopper(),
+            intake.auto_intake_fuel_stop()
         
-
+       );
 
 
     }

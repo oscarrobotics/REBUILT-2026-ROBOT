@@ -60,7 +60,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private boolean m_hasAppliedOperatorPerspective = false;
 
     public Pose2d red_hub = new Pose2d(4.65+5,4.10, new Rotation2d(0));///to be fixed
-    public Pose2d blue_hub = new Pose2d(4.65,4.10,new Rotation2d(0));
+    public Pose2d blue_hub = new Pose2d(4.65,4.20,new Rotation2d(0));
 
 
     
@@ -208,49 +208,49 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
 
-    void configure_autobuilder(){
-        ModuleConfig defaultconfig = new ModuleConfig(null, null, m_drivetrainId, null, null, kNumConfigAttempts);
-        RobotConfig config = new RobotConfig(1,1,defaultconfig, 1);
-    try{
-      config = RobotConfig.fromGUISettings();
-    } catch (Exception e) {
-      // Handle exception as needed
-      e.printStackTrace();
+    // void configure_autobuilder(){
+    //     ModuleConfig defaultconfig = new ModuleConfig(null, null, m_drivetrainId, null, null, kNumConfigAttempts);
+    //     RobotConfig config = new RobotConfig(1,1,defaultconfig, 1);
+    // try{
+    //   config = RobotConfig.fromGUISettings();
+    // } catch (Exception e) {
+    //   // Handle exception as needed
+    //   e.printStackTrace();
       
-    }
+    // }
     
-    SwerveRequest.ApplyRobotSpeeds auto_drive = new SwerveRequest.ApplyRobotSpeeds();
+    // SwerveRequest.ApplyRobotSpeeds auto_drive = new SwerveRequest.ApplyRobotSpeeds();
     
-    // Configure AutoBuilder last
-    AutoBuilder.configure(
-            this::samplePoseNow, // Robot pose supplier
-            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::get_chasis_speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) ->{
-                auto_drive.withSpeeds(speeds)
-                .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())
-                .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY());
-            } 
-            , // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-            ), // PPLTVController is the built in path following controller for differential drive trains
-            config, // The robot configuration
-            () -> {
-              // Boolean supplier that controls when the path will be mirrored for the red alliance
-              // This will flip the path being followed to the red side of the field.
-              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+    // // Configure AutoBuilder last
+    // AutoBuilder.configure(
+    //         this::samplePoseNow, // Robot pose supplier
+    //         this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+    //         this::get_chasis_speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+    //         (speeds, feedforwards) ->{
+    //             auto_drive.withSpeeds(speeds)
+    //             .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())
+    //             .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY());
+    //         } 
+    //         , // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+    //         new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+    //                 new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+    //                 new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+    //         ), // PPLTVController is the built in path following controller for differential drive trains
+    //         config, // The robot configuration
+    //         () -> {
+    //           // Boolean supplier that controls when the path will be mirrored for the red alliance
+    //           // This will flip the path being followed to the red side of the field.
+    //           // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            },
-            this // Reference to this subsystem to set requirements
-    );
-    }
+    //           var alliance = DriverStation.getAlliance();
+    //           if (alliance.isPresent()) {
+    //             return alliance.get() == DriverStation.Alliance.Red;
+    //           }
+    //           return false;
+    //         },
+    //         this // Reference to this subsystem to set requirements
+    // );
+    // }
 
     ChassisSpeeds get_chasis_speeds(){
         return getKinematics().toChassisSpeeds(

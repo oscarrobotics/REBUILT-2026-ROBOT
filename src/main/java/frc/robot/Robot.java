@@ -50,14 +50,14 @@ public class Robot extends TimedRobot {
         m_timeAndJoystickReplay.update();
         m_robotContainer.periodic();
         CommandScheduler.getInstance().run(); 
-        m_time.setDouble(m_timer.get());
+        // m_time.setDouble(m_timer.get());
     }
 
     @Override
     public void robotInit() {
-        m_ShuffleboardTab = Shuffleboard.getTab("Driver and Operator");
-        m_phase = m_ShuffleboardTab.add("phase", m_ShuffleboardTab).getEntry();
-        m_time = m_ShuffleboardTab.add("match time", 0.0).getEntry();
+        // m_ShuffleboardTab = Shuffleboard.getTab("Driver and Operator");
+        // m_phase = m_ShuffleboardTab.add("phase", m_ShuffleboardTab).getEntry();
+        // m_time = m_ShuffleboardTab.add("match time", 0.0).getEntry();
     }
 
     @Override
@@ -71,9 +71,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        m_timer.reset();
-        m_timer.start();
-        m_phase.setString("20 second autonomous");
+        // m_timer.reset();
+        // m_timer.start();
+        // m_phase.setString("20 second autonomous");
 
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -90,9 +90,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        m_timer.reset();
-        m_timer.start();
-        m_phase.setString("110 second teleop");
+        // m_timer.reset();
+        // m_timer.start();
+        // m_phase.setString("110 second teleop");
 
 
 
