@@ -52,7 +52,7 @@ public class Intake extends SubsystemBase
 
    
    final Angle arm_start = Rotations.of(1.39);
-   final Angle arm_end = Rotations.of(57.917-4);
+   final Angle arm_end = Rotations.of(57.914-4); //original value 57.914-4 
    final Angle arm_delta = arm_end.minus(arm_start);
 
    final MotionMagicVoltage m_position_request = new MotionMagicVoltage(0);
@@ -77,7 +77,7 @@ public class Intake extends SubsystemBase
      private double targetVelocity = 0;
 
      //default feeder velocity 
-     private static final double default_velocity = 70.0;
+     private static final double default_velocity = 80.0; //original value 70
 
       public Intake(CommandSwerveDrivetrain pose_estimator){
 
