@@ -298,7 +298,7 @@ public class RobotContainer {
         return autoChooser.getSelected();
         // Simple drive forward auton
         // final var idle = new SwerveRequest.Idle();
-        return autoChooser.getSelected();
+        // return autoChooser.getSelected();
     //    return Commands.sequence(
             // (near the hub) 
             // extract intake 
@@ -332,7 +332,7 @@ public class RobotContainer {
 
 
     }
-
+}
 
 
 
