@@ -41,7 +41,7 @@
   },
   "NetworkTables Settings": {
     "mode": "Client (NT4)",
-    "serverTeam": "127.0.0.1"
+    "serverTeam": "832"
   },
   "Plots": {
     "Plot <0>": {
@@ -53,7 +53,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 315,
+          "height": 323,
           "series": [
             {
               "color": [
@@ -95,7 +95,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 303,
+          "height": 307,
           "series": [
             {
               "color": [
@@ -137,7 +137,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 338,
+          "height": 369,
           "series": [
             {
               "color": [
@@ -170,7 +170,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 338,
+          "height": 540,
           "series": [
             {
               "color": [
@@ -215,13 +215,18 @@
     "Plot <4>": {
       "plots": [
         {
+          "axis": [
+            {
+              "autoFit": true
+            }
+          ],
           "backgroundColor": [
             0.0,
             0.0,
             0.0,
             0.8500000238418579
           ],
-          "height": 338,
+          "height": 598,
           "series": [
             {
               "color": [
@@ -272,7 +277,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 338,
+          "height": 528,
           "series": [
             {
               "color": [

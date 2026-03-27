@@ -27,6 +27,8 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.GenericEntry;
+
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -62,8 +64,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
-    public Pose2d red_hub = new Pose2d(4.65+5,4.10, new Rotation2d(0));///to be fixed
-    public Pose2d blue_hub = new Pose2d(4.65,4.20,new Rotation2d(0));
+    public Pose2d red_hub = new Pose2d(11.9,4.05, new Rotation2d(0));///to be fixed
+    public Pose2d blue_hub = new Pose2d(4.65,4.050,new Rotation2d(0));
 
     Pose2d prevPose2d = new Pose2d();
 
@@ -93,6 +95,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final GenericEntry FL_drive_loadRatioEntry = tab.add("FL Drive Load Ratio", 0).getEntry();
     private final GenericEntry BL_drive_loadRatioEntry = tab.add("BL Drive Load Ratio", 0).getEntry();
     private final GenericEntry BR_drive_loadRatioEntry = tab.add("BR Drive Load Ratio", 0).getEntry();
+
+    private final GenericEntry chassisSpeedsEntry = tab.add("chassis speed test", 0).getEntry();
+
+    private final GenericEntry odomentryYentry = tab.add("odemetry y",0).getEntry();
+    private final GenericEntry odomentryXentry = tab.add("odemetry x",0).getEntry();
+    private final GenericEntry odomentryAentry = tab.add("odemetry A",0).getEntry();
+
     
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -251,13 +260,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
     
     SwerveRequest.ApplyRobotSpeeds auto_drive = new SwerveRequest.ApplyRobotSpeeds();
-    
+
     // Configure AutoBuilder last
     AutoBuilder.configure(
             this::samplePoseNow, // Robot pose supplier
             this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
             this::get_chasis_speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) ->{ this.applyRequest(() -> 
+            (speeds, feedforwards) ->{ this.setControl(
                 auto_drive.withSpeeds(speeds)
                 .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())
                 .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY())
@@ -376,13 +385,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         //  distance = getpose.minus(redhub).magnitude;
 
         Pose2d pose = samplePoseNow();
+        Double shooterangle = 180.0;
         if (alliance.equals(Alliance.Blue)){
 
-            angle_to_target = pose.relativeTo(blue_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(180));
+            angle_to_target = pose.relativeTo(blue_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(180+shooterangle%360));
         }
         else {
             
-            angle_to_target = pose.relativeTo(red_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(180));
+            angle_to_target = pose.relativeTo(red_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(0+shooterangle));
         }
    
 
@@ -531,16 +541,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
          * Otherwise, only check and apply the operator perspective if the DS is disabled.
          * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
          */
-        // if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
-        //     DriverStation.getAlliance().ifPresent(allianceColor -> {
-        //         setOperatorPerspectiveForward(
-        //             allianceColor == Alliance.Red
-        //                 ? kRedAlliancePerspectiveRotation
-        //                 : kBlueAlliancePerspectiveRotation
-        //         );
-        //         m_hasAppliedOperatorPerspective = true;
-        //     });
-        // }
+        if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
+            DriverStation.getAlliance().ifPresent(allianceColor -> {
+                setOperatorPerspectiveForward(
+                    allianceColor == Alliance.Red
+                        ? kRedAlliancePerspectiveRotation
+                        : kBlueAlliancePerspectiveRotation
+                );
+                m_hasAppliedOperatorPerspective = true;
+            });
+        }
 
         FR_drive_motorTemperatureEntry.setDouble(getModule(0).getDriveMotor().getDeviceTemp().getValueAsDouble());
         FL_drive_motorTemperatureEntry.setDouble(getModule(1).getDriveMotor().getDeviceTemp().getValueAsDouble());
@@ -567,6 +577,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         BL_drive_loadRatioEntry.setDouble(getModule(2).getDriveMotor().getStatorCurrent().getValueAsDouble() / getModule(2).getDriveMotor().getMotorVoltage().getValueAsDouble());
         BR_drive_loadRatioEntry.setDouble(getModule(3).getDriveMotor().getStatorCurrent().getValueAsDouble() / getModule(3).getDriveMotor().getMotorVoltage().getValueAsDouble());
 
+
+        chassisSpeedsEntry.setDouble(this.get_chasis_speeds().vxMetersPerSecond);
+        Pose2d pose = samplePoseNow();
+        odomentryYentry.setDouble(pose.getY());
+        odomentryXentry.setDouble(pose.getX());
+        odomentryAentry.setDouble(pose.getRotation().getDegrees());
     }
 
     private void startSimThread() {
