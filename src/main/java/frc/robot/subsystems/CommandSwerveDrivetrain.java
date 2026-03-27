@@ -385,13 +385,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         //  distance = getpose.minus(redhub).magnitude;
 
         Pose2d pose = samplePoseNow();
+        Double shooterangle = 180.0;
         if (alliance.equals(Alliance.Blue)){
 
-            angle_to_target = pose.relativeTo(blue_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(180));
+            angle_to_target = pose.relativeTo(blue_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(180+shooterangle%360));
         }
         else {
             
-            angle_to_target = pose.relativeTo(red_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(0));
+            angle_to_target = pose.relativeTo(red_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(0+shooterangle));
         }
    
 
