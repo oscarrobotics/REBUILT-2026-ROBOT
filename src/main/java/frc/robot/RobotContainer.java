@@ -292,8 +292,8 @@ public class RobotContainer {
         // return autoChooser.getSelected();
         // Simple drive forward auton
         // final var idle = new SwerveRequest.Idle();
-        // return autoChooser.getSelected();
-       return Commands.sequence(
+        return autoChooser.getSelected();
+    //    return Commands.sequence(
             // (near the hub) 
             // extract intake 
             // wait 0.5 second
@@ -301,28 +301,28 @@ public class RobotContainer {
             
 
             // intake.auto_extract_out_intake_command(),
-            new InstantCommand(intake::half_deploy), new WaitCommand(0.5),
-            // drivetrain.applyRequest(() ->
-            //     locked_drive
-            //         // .withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-            //         // .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            //         .withHeadingPID(5,0, 0.01)
-            //         .withTargetDirection(new Rotation2d(drivetrain.get_target_angle()))
+    //         new InstantCommand(intake::half_deploy), new WaitCommand(0.5),
+    //         // drivetrain.applyRequest(() ->
+    //         //     locked_drive
+    //         //         // .withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+    //         //         // .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+    //         //         .withHeadingPID(5,0, 0.01)
+    //         //         .withTargetDirection(new Rotation2d(drivetrain.get_target_angle()))
                     
-            // ),
+    //         // ),
             
-            shooter.autoshoot(),
-            feeder.auto_feeder_start(),
-            hopper.auto_start_hopper(),
-            new WaitCommand(3), 
-            intake.auto_intake_fuel_command(),  
-            new WaitCommand(5),
-            new InstantCommand(shooter::StopShooter, shooter),
-            feeder.auto_feeder_end(),
-            hopper.auto_stop_hopper(),
-            intake.auto_intake_fuel_stop()
+    //         shooter.autoshoot(),
+    //         feeder.auto_feeder_start(),
+    //         hopper.auto_start_hopper(),
+    //         new WaitCommand(3), 
+    //         intake.auto_intake_fuel_command(),  
+    //         new WaitCommand(5),
+    //         new InstantCommand(shooter::StopShooter, shooter),
+    //         feeder.auto_feeder_end(),
+    //         hopper.auto_stop_hopper(),
+    //         intake.auto_intake_fuel_stop()
         
-       );
+    //    );
 
 
     }

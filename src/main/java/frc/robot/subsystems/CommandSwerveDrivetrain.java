@@ -260,13 +260,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
     
     SwerveRequest.ApplyRobotSpeeds auto_drive = new SwerveRequest.ApplyRobotSpeeds();
-    
+
     // Configure AutoBuilder last
     AutoBuilder.configure(
             this::samplePoseNow, // Robot pose supplier
             this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
             this::get_chasis_speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) ->{ this.applyRequest(() -> 
+            (speeds, feedforwards) ->{ this.setControl(
                 auto_drive.withSpeeds(speeds)
                 .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())
                 .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY())
