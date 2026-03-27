@@ -5,13 +5,25 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "trench 1 "
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
           "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "1"
+                  "pathName": "trench 2 "
                 }
               },
               {
@@ -23,7 +35,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.0
+                  "waitTime": 2.0
                 }
               },
               {
@@ -33,9 +45,34 @@
                 }
               },
               {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
                 "type": "path",
                 "data": {
-                  "pathName": "2"
+                  "pathName": "trench 3"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
                 }
               },
               {
@@ -57,21 +94,27 @@
                 }
               },
               {
+                "type": "named",
+                "data": {
+                  "name": "extendintakearm"
+                }
+              },
+              {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.0
+                  "waitTime": 2.0
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "autointakefuel"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 5.0
+                  "name": "retractintakearm"
                 }
               },
               {
@@ -90,42 +133,6 @@
                 "type": "named",
                 "data": {
                   "name": "autohopperstop"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "autointakefuelstop"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "3"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "autointakefuel"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 3.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "autointakefuelstop"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "4"
                 }
               }
             ]

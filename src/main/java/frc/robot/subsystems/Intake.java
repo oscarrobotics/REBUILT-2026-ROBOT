@@ -77,7 +77,7 @@ public class Intake extends SubsystemBase
      private double targetVelocity = 0;
 
      //default feeder velocity 
-     private static final double default_velocity = 80.0; //original value 70
+     private static final double default_velocity = 90.0; //original value 70
 
       public Intake(CommandSwerveDrivetrain pose_estimator){
 
@@ -336,7 +336,7 @@ public class Intake extends SubsystemBase
    public Command auto_intake_fuel_command(){
 
          return run(()->{
-         set_intake_speed(AngularVelocity.ofBaseUnits(80, RotationsPerSecond));})
+         set_intake_speed(AngularVelocity.ofBaseUnits(90, RotationsPerSecond));})
          .withTimeout(2);
          // .andThen(this::stop_intake)
          // .andThen(this::has_fuel_false);

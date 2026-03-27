@@ -20,6 +20,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
@@ -31,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
@@ -79,18 +81,18 @@ public class RobotContainer {
 
     public final Vision vision = new Vision(drivetrain);
 
-    
     private final SendableChooser<Command> autoChooser;
     
     public RobotContainer() {
-        configureBindings();
+       
         configureSystemsBindings();
         name_commands();
         drivetrain.configure_autobuilder();
-        autoChooser = AutoBuilder.buildAutoChooser("auto paths");
-        Shuffleboard.getTab("autonomouspath").add(autoChooser);
+        autoChooser = AutoBuilder.buildAutoChooser("trench");
+        SmartDashboard.putData("Auto Mode", autoChooser);
+        Shuffleboard.getTab("autonomous path").add(autoChooser);
 
-        
+        configureBindings();
 
     }
 
@@ -104,8 +106,8 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
 
         //field centric drive, use by default:
+         
         
-
 
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
@@ -273,6 +275,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("autointakefuel", intake.auto_intake_fuel_command());
         NamedCommands.registerCommand("autointakefuelstop", intake.auto_intake_fuel_stop());
         NamedCommands.registerCommand("autointakearmhalf", new InstantCommand(intake::half_deploy));
+        NamedCommands.registerCommand("extendintakearm", new InstantCommand(intake:: extendArm));
+        NamedCommands.registerCommand("retractintakearm", new InstantCommand(intake::retractArm));
         
         NamedCommands.registerCommand("autoshoot", shooter.autoshoot());
         NamedCommands.registerCommand("autoshootstop", new InstantCommand(shooter::StopShooter, shooter));
@@ -287,12 +291,14 @@ public class RobotContainer {
 
 
 
-    public Command getAutonomousCommand() {
 
-        // return autoChooser.getSelected();
+    public Command getAutonomousCommand() {
+        /* Run the path selected from the auto chooser */
+        
+        return autoChooser.getSelected();
         // Simple drive forward auton
         // final var idle = new SwerveRequest.Idle();
-       return Commands.sequence(
+      // return Commands.sequence(
             // (near the hub) 
             // extract intake 
             // wait 0.5 second
@@ -300,23 +306,24 @@ public class RobotContainer {
             
 
             // intake.auto_extract_out_intake_command(),
-            new InstantCommand(intake::half_deploy), new WaitCommand(2),
-            shooter.autoshoot(),
-            feeder.auto_feeder_start(),
-            hopper.auto_start_hopper(),
-            new WaitCommand(3), 
-            intake.auto_intake_fuel_command(),  
-            new WaitCommand(5),
-            new InstantCommand(shooter::StopShooter, shooter),
-            feeder.auto_feeder_end(),
-            hopper.auto_stop_hopper(),
-            intake.auto_intake_fuel_stop()
+            //new InstantCommand(intake::half_deploy), new WaitCommand(2),
+            //shooter.autoshoot(),
+            //feeder.auto_feeder_start(),
+           // hopper.auto_start_hopper(),
+           // new WaitCommand(3), 
+           // intake.auto_intake_fuel_command(),  
+           // new WaitCommand(5),
+           // new InstantCommand(shooter::StopShooter, shooter),
+           // feeder.auto_feeder_end(),
+           // hopper.auto_stop_hopper(),
+           // intake.auto_intake_fuel_stop()
         
-       );
-
+       
+    }
+     
 
     }
 
-}
+
 
 

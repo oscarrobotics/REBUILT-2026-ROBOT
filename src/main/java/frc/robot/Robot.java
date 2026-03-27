@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
+
 import com.ctre.phoenix6.HootAutoReplay;
 import com.ctre.phoenix6.SignalLogger;
 
@@ -12,6 +14,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -35,7 +38,8 @@ public class Robot extends TimedRobot {
 
     public Robot() {
         m_robotContainer = new RobotContainer();
-        SignalLogger.setPath("/media/sda/ctre-logs/");
+        FollowPathCommand.warmupCommand().schedule();
+       
         
     }
 
@@ -46,7 +50,7 @@ public class Robot extends TimedRobot {
         m_timeAndJoystickReplay.update();
         m_robotContainer.periodic();
         CommandScheduler.getInstance().run(); 
-        // m_time.setDouble(m_timer.get());
+       
     }
 
     @Override
@@ -67,9 +71,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        // m_timer.reset();
-        // m_timer.start();
-        // m_phase.setString("20 second autonomous");
+       
 
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -86,9 +88,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        // m_timer.reset();
-        // m_timer.start();
-        // m_phase.setString("110 second teleop");
+      
 
 
 
