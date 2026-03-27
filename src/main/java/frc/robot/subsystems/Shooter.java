@@ -253,8 +253,8 @@ public class Shooter extends SubsystemBase{
         //auto to shoot preloaded fuel 
         public Command autoshoot(){
           
-          return runOnce(() -> {StartShooter(opt_speed);})
-          .andThen(new WaitCommand(4));
+          return runOnce(() -> {StartShooter(get_auto_speed());})
+          .andThen(new WaitCommand(2));
           // .until(this::shooteratSpeed)
 
             // .withTimeout(2);
@@ -273,9 +273,9 @@ public class Shooter extends SubsystemBase{
           
         //  updatePID();
 
-         leaderRPMEntry.setDouble(m_shooterleader_encoder.getVelocity());
-         followerRPMEntry.setDouble(m_shooterfollower_encoder.getVelocity());
-         targetRPMEntry.setDouble(m_targetRPM.in(RPM));
+        leaderRPMEntry.setDouble(m_shooterleader_encoder.getVelocity());
+        followerRPMEntry.setDouble(m_shooterfollower_encoder.getVelocity());
+        targetRPMEntry.setDouble(m_targetRPM.in(RPM));
         targetDistanceEntry.setDouble(m_poseEstimator.get_target_distance().in(Meter));
         // targetSpeedEntry.setDouble(get_target_speed().in(RPM));
         angleToTargetEntry.setDouble(m_poseEstimator.get_target_angle().in(Degree));

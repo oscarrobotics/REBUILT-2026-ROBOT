@@ -52,7 +52,7 @@ public class Intake extends SubsystemBase
 
    
    final Angle arm_start = Rotations.of(1.39);
-   final Angle arm_end = Rotations.of(57.917-4);
+   final Angle arm_end = Rotations.of(57.917-3);
    final Angle arm_delta = arm_end.minus(arm_start);
 
    final MotionMagicVoltage m_position_request = new MotionMagicVoltage(0);
@@ -112,10 +112,11 @@ public class Intake extends SubsystemBase
       m_intake_roller_config.Slot0.kI = kIEntry.getDouble(0.0);  // no output for integrated error
       m_intake_roller_config.Slot0.kD = kDEntry.getDouble(0.0);  // no output for error derivative
       
+      m_intake_roller_config.CurrentLimits.StatorCurrentLimit=180.0;
       //magic motion settings 
       var motionMagicConfigs = m_intake_roller_config.MotionMagic;
-      motionMagicConfigs.MotionMagicAcceleration = 400; // Target acceleration of 400 rps/s (0.25 seconds to max)
-      motionMagicConfigs.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
+      motionMagicConfigs.MotionMagicAcceleration = 100; // Target acceleration of 400 rps/s (0.25 seconds to max)
+      motionMagicConfigs.MotionMagicJerk = 1000; // Target jerk of 4000 rps/s/s (0.1 seconds)
       
       m_intake_roller_motor.getConfigurator().apply(m_intake_roller_config);
       

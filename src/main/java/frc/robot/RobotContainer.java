@@ -111,36 +111,36 @@ public class RobotContainer {
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed*1) // Drive forward with negative Y (forward)
-                    .withVelocityY(-drivestick.getLeftX() * MaxSpeed*1) // Drive left with negative X (left)
+                    .withVelocityY(-drivestick.getLeftX() * MaxSpeed*1) // Drive left with negativeX (left)
                     .withRotationalRate(-drivestick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
                     
                     )
         );
 
-        drivestick.a().toggleOnTrue(drivetrain.applyRequest(() ->
-                drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(drivetrain.get_rate_to_lock()) // Drive counterclockwise with negative X (left)
+        // drivestick.a().toggleOnTrue(drivetrain.applyRequest(() ->
+        //         drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+        //             .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        //             .withRotationalRate(drivetrain.get_rate_to_lock()) // Drive counterclockwise with negative X (left)
                     
-                    )
-        );
+        //             )
+        // );
         drivestick.b().toggleOnTrue(drivetrain.applyRequest(() ->
                 locked_drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withHeadingPID(5,0, 0.01)
-                    .withTargetDirection(new Rotation2d(drivetrain.get_target_angle()))
+                    .withTargetDirection(new Rotation2d(drivetrain.get_target_angle().plus(Degree.of(7).times(drivestick.getRightX()))))
                     
                     )
         );
 
-        drivestick.x().toggleOnTrue(drivetrain.applyRequest(() ->
-                locked_drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withHeadingPID(5,0, 0.01)
-                    .withTargetDirection(new Rotation2d(drivetrain.get_target_moving_angle()))
+        // drivestick.x().toggleOnTrue(drivetrain.applyRequest(() ->
+        //         locked_drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+        //             .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        //             .withHeadingPID(5,0, 0.01)
+        //             .withTargetDirection(new Rotation2d(drivetrain.get_target_moving_angle()))
                     
-                    )
-        );
+        //             )
+        // );
 
         drivestick.povUp().and(intake::isDeployed)
         .whileTrue(new InstantCommand(intake::startRoller, intake));
@@ -151,22 +151,22 @@ public class RobotContainer {
 
 
         drivestick.povUp().whileTrue(drivetrain.applyRequest(()->
-            testdrive.withVelocityX(MaxSpeed*0.3)            
+            testdrive.withVelocityX(MaxSpeed*0.5)            
             .withRotationalRate(-drivestick.getRightX() * MaxAngularRate)
             )).onFalse(drivetrain.applyRequest(()->testdrive.withVelocityX(0)).withTimeout(0.02));
         
         drivestick.povDown().whileTrue(drivetrain.applyRequest(()->
-            testdrive.withVelocityX(-MaxSpeed*0.3)            
+            testdrive.withVelocityX(-MaxSpeed*0.5)            
             .withRotationalRate(-drivestick.getRightX() * MaxAngularRate)
             )).onFalse(drivetrain.applyRequest(()->testdrive.withVelocityX(0)).withTimeout(0.02));
 
         drivestick.povLeft().whileTrue(drivetrain.applyRequest(()->
-            testdrive.withVelocityY(MaxSpeed*0.3)
+            testdrive.withVelocityY(MaxSpeed*0.5)
             .withRotationalRate(-drivestick.getRightX() * MaxAngularRate)
             )).onFalse(drivetrain.applyRequest(()->testdrive.withVelocityY(0)).withTimeout(0.02));
 
         drivestick.povRight().whileTrue(drivetrain.applyRequest(()->
-            testdrive.withVelocityY(-MaxSpeed*0.3)          
+            testdrive.withVelocityY(-MaxSpeed*0.5)          
             .withRotationalRate(-drivestick.getRightX() * MaxAngularRate)
             )).onFalse(drivetrain.applyRequest(()->testdrive.withVelocityY(0)).withTimeout(0.02));
 
@@ -292,6 +292,7 @@ public class RobotContainer {
         // return autoChooser.getSelected();
         // Simple drive forward auton
         // final var idle = new SwerveRequest.Idle();
+        // return autoChooser.getSelected();
        return Commands.sequence(
             // (near the hub) 
             // extract intake 
@@ -300,7 +301,16 @@ public class RobotContainer {
             
 
             // intake.auto_extract_out_intake_command(),
-            new InstantCommand(intake::half_deploy), new WaitCommand(2),
+            new InstantCommand(intake::half_deploy), new WaitCommand(0.5),
+            // drivetrain.applyRequest(() ->
+            //     locked_drive
+            //         // .withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+            //         // .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+            //         .withHeadingPID(5,0, 0.01)
+            //         .withTargetDirection(new Rotation2d(drivetrain.get_target_angle()))
+                    
+            // ),
+            
             shooter.autoshoot(),
             feeder.auto_feeder_start(),
             hopper.auto_start_hopper(),

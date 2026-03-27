@@ -23,10 +23,10 @@ public class Vision {
     String k_limelightName = "limelight"; //default name of the limelight, can be changed in the limelight settings   
 
     final Distance k_xOffset = Inch.of(-27.25/2+6); //front/back offest of camera to robot center (positive is forward, negative is backward)
-    final Distance k_yOffset = Inch.of((27.25/2-3.125)); //left/right offset of camera to robot center (positive is left, negative is right)
+    final Distance k_yOffset = Inch.of(-(27.25/2-3.125)); //left/right offset of camera to robot center (positive is left, negative is right)
     final Distance k_zOffset = Inch.of(22-0.75); //vertical offset of camera to robot center (positive is up, negative is down)
     final Angle k_rollOffset = Degree.of(0.0); //roll offset of camera to robot center (positive is clockwise, negative is counterclockwise)    
-    final Angle k_pitchOffset = Degree.of(12.4); //pitch offset of camera to robot center (positive is up, negative is down)
+    final Angle k_pitchOffset = Degree.of(9.); //pitch offset of camera to robot center (positive is up, negative is down)
     final Angle k_yawOffset = Degree.of(0.0); //yaw offset of camera to robot center (positive is left, negative is right)
 
     private CommandSwerveDrivetrain m_poseEstimator;
@@ -64,16 +64,17 @@ public class Vision {
     {
         Pose2d currentPose = m_poseEstimator.samplePoseNow();
         // System.out.println(currentPose);
-        LimelightHelpers.SetRobotOrientation(k_limelightName,
-            currentPose.getRotation().getDegrees() , 
-            0, 
-            0, 
-            0,
-             0, 
-             0
-             );
+        // LimelightHelpers.SetRobotOrientation(k_limelightName,
+        //     currentPose.getRotation().getDegrees() , 
+        //     0, 
+        //     0, 
+        //     0,
+        //      0, 
+        //      0
+        //      );
 
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(k_limelightName);
+        // LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(k_limelightName);
+         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(k_limelightName);
         boolean reject_update = false;
 
 
