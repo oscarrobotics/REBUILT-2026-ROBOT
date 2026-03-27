@@ -1,0 +1,86 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "tower to hub"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoshoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autofeederstart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autohopperstart"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autointakefuel"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoshootstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autofeederstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autohopperstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autointakefuelstop"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

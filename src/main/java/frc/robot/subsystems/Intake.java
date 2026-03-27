@@ -77,7 +77,7 @@ public class Intake extends SubsystemBase
      private double targetVelocity = 0;
 
      //default feeder velocity 
-     private static final double default_velocity = 70.0;
+     private static final double default_velocity = 80.0; //original value 70
 
       public Intake(CommandSwerveDrivetrain pose_estimator){
 
