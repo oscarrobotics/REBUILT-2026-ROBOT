@@ -59,15 +59,15 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "right return 1"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "autointakefuelstop"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "right return 1"
                 }
               },
               {
@@ -83,6 +83,104 @@
           "type": "wait",
           "data": {
             "waitTime": 0.2
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "auto_aim"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoshoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autofeederstart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autohopperstart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "armwiggle"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoshootstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autofeederstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autohopperstop"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autointakefuel"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "right approch 2"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "autointakefuelstop"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "right return 2"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.2
+                }
+              }
+            ]
           }
         },
         {

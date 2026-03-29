@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "trench 1 "
+            "pathName": "right approch 1 "
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "trench 2 "
+            "pathName": "right return 1"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "trench 3"
+            "pathName": "right approch 2"
           }
         }
       ]

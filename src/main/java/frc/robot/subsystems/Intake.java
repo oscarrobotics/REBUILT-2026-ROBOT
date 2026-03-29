@@ -28,7 +28,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -272,6 +274,17 @@ public class Intake extends SubsystemBase
          m_intake_arm_motor.setControl(m_position_request.withPosition(arm_delta.times(0.5)));
       }
 
+      public ParallelRaceGroup auto_wiggle(){
+
+         return new SequentialCommandGroup(
+            new InstantCommand(()->m_intake_arm_motor.setControl(m_position_request.withPosition(arm_delta.div(2))), this),
+            new WaitCommand(0.8),
+            new InstantCommand(()->m_intake_arm_motor.setControl(m_position_request.withPosition(arm_delta)), this),
+            new WaitCommand(0.8)
+         ).repeatedly().withTimeout(5);
+            
+            
+      }
 
 
       // public void bounce_arm(){
@@ -287,6 +300,7 @@ public class Intake extends SubsystemBase
       //Shuffleboard Updates */ 
       @Override
       public void periodic() {
+         publish_intake_data();
 
       }
       
@@ -308,7 +322,7 @@ public class Intake extends SubsystemBase
         //     speed = k_max_wheel_speed.unaryMinus();
         // }
 
-        m_intake_roller_motor.setControl(m_intakeFXOut_v_mm.withVelocity(speed));
+        m_intake_roller_motor.setControl(m_MagicVelocityVoltage.withVelocity(speed));
 
           }
 
@@ -336,9 +350,8 @@ public class Intake extends SubsystemBase
 
    public Command auto_intake_fuel_command(){
 
-         return run(()->{
-         set_intake_speed(AngularVelocity.ofBaseUnits(90, RotationsPerSecond));})
-         .withTimeout(2);
+         return run(this::startRoller)
+         .withTimeout(0.25);
          // .andThen(this::stop_intake)
          // .andThen(this::has_fuel_false);
       }
@@ -346,7 +359,7 @@ public class Intake extends SubsystemBase
    public Command auto_intake_fuel_stop(){
       return run(()->{
          set_intake_speed(AngularVelocity.ofBaseUnits(0, RotationsPerSecond));
-      });
+      }).withTimeout(0.1);
    }
 
    public Command auto_outtake_fuel_command(){

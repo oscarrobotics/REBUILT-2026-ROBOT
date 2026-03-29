@@ -530,6 +530,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
 
+    public Command instant_autoAim(SwerveRequest.FieldCentricFacingAngle locked){
+
+        return applyRequest(()->locked.withHeadingPID(5,0, 0.01)
+                    .withTargetDirection(new Rotation2d(get_target_angle()))).withTimeout(1);
+    }
+
     
 
     @Override
@@ -549,33 +555,34 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         : kBlueAlliancePerspectiveRotation
                 );
                 m_hasAppliedOperatorPerspective = true;
+                // this.seedFieldCentric(this.samplePoseNow().getRotation());
             });
         }
 
-        FR_drive_motorTemperatureEntry.setDouble(getModule(0).getDriveMotor().getDeviceTemp().getValueAsDouble());
-        FL_drive_motorTemperatureEntry.setDouble(getModule(1).getDriveMotor().getDeviceTemp().getValueAsDouble());
-        BL_drive_motorTemperatureEntry.setDouble(getModule(2).getDriveMotor().getDeviceTemp().getValueAsDouble());
-        BR_drive_motorTemperatureEntry.setDouble(getModule(3).getDriveMotor().getDeviceTemp().getValueAsDouble());
+        // FR_drive_motorTemperatureEntry.setDouble(getModule(0).getDriveMotor().getDeviceTemp().getValueAsDouble());
+        // FL_drive_motorTemperatureEntry.setDouble(getModule(1).getDriveMotor().getDeviceTemp().getValueAsDouble());
+        // BL_drive_motorTemperatureEntry.setDouble(getModule(2).getDriveMotor().getDeviceTemp().getValueAsDouble());
+        // BR_drive_motorTemperatureEntry.setDouble(getModule(3).getDriveMotor().getDeviceTemp().getValueAsDouble());
 
-        FR_steer_motorTemperatureEntry.setDouble(getModule(0).getSteerMotor().getDeviceTemp().getValueAsDouble());
-        FL_steer_motorTemperatureEntry.setDouble(getModule(1).getSteerMotor().getDeviceTemp().getValueAsDouble());
-        BL_steer_motorTemperatureEntry.setDouble(getModule(2).getSteerMotor().getDeviceTemp().getValueAsDouble());
-        BR_steer_motorTemperatureEntry.setDouble(getModule(3).getSteerMotor().getDeviceTemp().getValueAsDouble());      
+        // FR_steer_motorTemperatureEntry.setDouble(getModule(0).getSteerMotor().getDeviceTemp().getValueAsDouble());
+        // FL_steer_motorTemperatureEntry.setDouble(getModule(1).getSteerMotor().getDeviceTemp().getValueAsDouble());
+        // BL_steer_motorTemperatureEntry.setDouble(getModule(2).getSteerMotor().getDeviceTemp().getValueAsDouble());
+        // BR_steer_motorTemperatureEntry.setDouble(getModule(3).getSteerMotor().getDeviceTemp().getValueAsDouble());      
 
-        FR_drive_currentEntry.setDouble(getModule(0).getDriveMotor().getStatorCurrent().getValueAsDouble());
-        FL_drive_currentEntry.setDouble(getModule(1).getDriveMotor().getStatorCurrent().getValueAsDouble());
-        BL_drive_currentEntry.setDouble(getModule(2).getDriveMotor().getStatorCurrent().getValueAsDouble());
-        BR_drive_currentEntry.setDouble(getModule(3).getDriveMotor().getStatorCurrent().getValueAsDouble());    
+        // FR_drive_currentEntry.setDouble(getModule(0).getDriveMotor().getStatorCurrent().getValueAsDouble());
+        // FL_drive_currentEntry.setDouble(getModule(1).getDriveMotor().getStatorCurrent().getValueAsDouble());
+        // BL_drive_currentEntry.setDouble(getModule(2).getDriveMotor().getStatorCurrent().getValueAsDouble());
+        // BR_drive_currentEntry.setDouble(getModule(3).getDriveMotor().getStatorCurrent().getValueAsDouble());    
 
-        FR_steer_currentEntry.setDouble(getModule(0).getSteerMotor().getStatorCurrent().getValueAsDouble());
-        FL_steer_currentEntry.setDouble(getModule(1).getSteerMotor().getStatorCurrent().getValueAsDouble());
-        BL_steer_currentEntry.setDouble(getModule(2).getSteerMotor().getStatorCurrent().getValueAsDouble());
-        BR_steer_currentEntry.setDouble(getModule(3).getSteerMotor().getStatorCurrent().getValueAsDouble());    
+        // FR_steer_currentEntry.setDouble(getModule(0).getSteerMotor().getStatorCurrent().getValueAsDouble());
+        // FL_steer_currentEntry.setDouble(getModule(1).getSteerMotor().getStatorCurrent().getValueAsDouble());
+        // BL_steer_currentEntry.setDouble(getModule(2).getSteerMotor().getStatorCurrent().getValueAsDouble());
+        // BR_steer_currentEntry.setDouble(getModule(3).getSteerMotor().getStatorCurrent().getValueAsDouble());    
 
-        FR_drive_loadRatioEntry.setDouble(getModule(0).getDriveMotor().getStatorCurrent().getValueAsDouble() / getModule(0).getDriveMotor().getMotorVoltage().getValueAsDouble());
-        FL_drive_loadRatioEntry.setDouble(getModule(1).getDriveMotor().getStatorCurrent().getValueAsDouble() / getModule(1).getDriveMotor().getMotorVoltage().getValueAsDouble());
-        BL_drive_loadRatioEntry.setDouble(getModule(2).getDriveMotor().getStatorCurrent().getValueAsDouble() / getModule(2).getDriveMotor().getMotorVoltage().getValueAsDouble());
-        BR_drive_loadRatioEntry.setDouble(getModule(3).getDriveMotor().getStatorCurrent().getValueAsDouble() / getModule(3).getDriveMotor().getMotorVoltage().getValueAsDouble());
+        // FR_drive_loadRatioEntry.setDouble(getModule(0).getDriveMotor().getStatorCurrent().getValueAsDouble() / getModule(0).getDriveMotor().getMotorVoltage().getValueAsDouble());
+        // FL_drive_loadRatioEntry.setDouble(getModule(1).getDriveMotor().getStatorCurrent().getValueAsDouble() / getModule(1).getDriveMotor().getMotorVoltage().getValueAsDouble());
+        // BL_drive_loadRatioEntry.setDouble(getModule(2).getDriveMotor().getStatorCurrent().getValueAsDouble() / getModule(2).getDriveMotor().getMotorVoltage().getValueAsDouble());
+        // BR_drive_loadRatioEntry.setDouble(getModule(3).getDriveMotor().getStatorCurrent().getValueAsDouble() / getModule(3).getDriveMotor().getMotorVoltage().getValueAsDouble());
 
 
         chassisSpeedsEntry.setDouble(this.get_chasis_speeds().vxMetersPerSecond);

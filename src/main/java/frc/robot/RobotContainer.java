@@ -235,8 +235,7 @@ public class RobotContainer {
         .whileTrue(new RepeatCommand(new InstantCommand(feeder::startFeeder)))
         .onFalse(new InstantCommand(hopper::stopHopper)).onFalse(new InstantCommand(feeder::stopFeeder));
 
-
-        
+        operatorstick.rightTrigger().and(()->feeder.been_shooting(4)).whileTrue(intake.auto_wiggle());
 
 
         operatorstick.povUp().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.close_speed;})); //near hub
@@ -286,6 +285,9 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("autohopperstart", hopper.auto_start_hopper());
         NamedCommands.registerCommand("autohopperstop", hopper.auto_stop_hopper());
+
+        NamedCommands.registerCommand("armwiggle", intake.auto_wiggle());
+        NamedCommands.registerCommand("auto_aim", drivetrain.instant_autoAim(locked_drive));
        
     }
 

@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,6 +30,8 @@ public class Feeder extends SubsystemBase
    final MotionMagicVelocityVoltage m_MagicVelocityVoltage = new MotionMagicVelocityVoltage(0);
    
    final CommandSwerveDrivetrain m_pose_estimator;
+
+   private Timer m_shootingtimer = new Timer();
 
    //shuffleboard tab entries 
      private final ShuffleboardTab tab = Shuffleboard.getTab("Feeder");
@@ -105,6 +108,10 @@ public class Feeder extends SubsystemBase
       //method to start the feeder when shooter activates 
       public void startFeeder() {
          targetVelocity = default_velocity;
+         m_shootingtimer.start();
+         m_shooting_reset_timer.reset();
+         m_shooting_reset_timer.stop();
+
          targetVelocityEntry.setDouble(targetVelocity);
          m_feeder_motor.setControl(m_MagicVelocityVoltage.withVelocity(default_velocity));
          
@@ -113,6 +120,10 @@ public class Feeder extends SubsystemBase
       //method to stop the feeder when shooter stops
       public void stopFeeder() {
          targetVelocity = 0;
+
+         m_shootingtimer.stop();
+         m_shooting_reset_timer.start();
+         
          m_feeder_motor.setControl(m_MagicVelocityVoltage.withVelocity(0));
          targetVelocityEntry.setDouble(0);
       }
@@ -140,19 +151,30 @@ public class Feeder extends SubsystemBase
             new WaitCommand(0.25)
          );
       }
+      public boolean been_shooting(double time){
+          return m_shootingtimer.get()>time;
+        }
 
       //Shuffleboard Updates */ 
+
+      Timer m_shooting_reset_timer = new Timer();
       @Override
       public void periodic() {
 
           //running motion magic control
-          m_feeder_motor.setControl(
-               new MotionMagicVelocityVoltage(targetVelocity));
+         //  m_feeder_motor.setControl(
+         //       new MotionMagicVelocityVoltage(targetVelocity));
           
           //updating current velocity 
           currentVelocityEntry.setDouble(
                   m_feeder_motor.getRotorVelocity().getValueAsDouble());
           motorTemperatureEntry.setDouble(m_feeder_motor.getDeviceTemp().getValueAsDouble());
+
+          if (m_shooting_reset_timer.get()>5){
+            m_shootingtimer.reset();
+          }
+
+
       }
       
    }

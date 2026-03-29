@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -41,6 +42,8 @@ public class Shooter extends SubsystemBase{
     // Initialize the closed loop controller -> using closed loop control system for shooter mechanism 
      private SparkClosedLoopController m_controllerleader;
 
+    
+
     // max RPM 
      public AngularVelocity k_maxShooterRPM; 
     
@@ -56,7 +59,7 @@ public class Shooter extends SubsystemBase{
     
      public  AngularVelocity min_speed = RPM.of(2800/1.03);
      public  AngularVelocity opt_speed = RPM.of(3200/1.03);
-     public  AngularVelocity max_speed = RPM.of(5200/1.03);
+     public  AngularVelocity max_speed = RPM.of(5200);
 
      public AngularVelocity speed_setpoint = opt_speed;
 
@@ -152,12 +155,24 @@ public class Shooter extends SubsystemBase{
         //method to run the shooter 
         public void StartShooter(AngularVelocity velocity){
           m_targetRPM = velocity;
+          
+
           if (velocity.lt(k_maxShooterRPM)) {
             m_controllerleader.setSetpoint(
             velocity.in(RPM),
             ControlType.kVelocity,
             ClosedLoopSlot.kSlot0          
             );
+          }
+          else{
+             m_controllerleader.setSetpoint(
+            opt_speed.in(RPM),
+            ControlType.kVelocity,
+            ClosedLoopSlot.kSlot0          
+            );
+            System.out.println("no target:opt velocity used");
+          
+
           }
           // System.out.println("shooting");
           // System.out.println(k_maxShooterRPM);
@@ -176,12 +191,15 @@ public class Shooter extends SubsystemBase{
 
         //method to stop the shooter 
         public void StopShooter() {
+          
           m_targetRPM = RPM.of(0);
           m_controllerleader.setSetpoint(
             0, ControlType.kVoltage,
             ClosedLoopSlot.kSlot0
             );
         }
+
+        
 
         //command to stop shooter 
         public Command stopCommand() {
@@ -238,7 +256,7 @@ public class Shooter extends SubsystemBase{
 
         public AngularVelocity get_auto_speed(){
 
-          return distance2speed(m_poseEstimator.get_target_distance());
+          return distance2speed(m_poseEstimator.get_target_distance().minus(Meters.of(0.3)));
         }
 
         public AngularVelocity get_moving_auto_speed(){
@@ -254,7 +272,7 @@ public class Shooter extends SubsystemBase{
         public Command autoshoot(){
           
           return runOnce(() -> {StartShooter(get_auto_speed());})
-          .andThen(new WaitCommand(2));
+          .andThen(new WaitCommand(0.4));
           // .until(this::shooteratSpeed)
 
             // .withTimeout(2);
