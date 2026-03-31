@@ -1,0 +1,253 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "left approach 1 "
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "extendintakearm"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "autointakefuel"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "autointakefuelstop"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "left return 1"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.2
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "auto_aim"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoshoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autofeederstart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autohopperstart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "armwiggle"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoshootstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autofeederstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autohopperstop"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autointakefuel"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "left approach 2"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "autointakefuelstop"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "left return 2"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.2
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "auto_aim"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoshoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autofeederstart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autohopperstart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "armwiggle"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoshootstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autofeederstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autohopperstop"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

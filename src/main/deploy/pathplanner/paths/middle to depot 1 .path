@@ -3,37 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.742799525504152,
-        "y": 6.493475682087782
+        "x": 3.502435897435899,
+        "y": 4.035
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.083923076917265,
-        "y": 8.000217948723764
+        "x": 2.2117051282051294,
+        "y": 3.8722051282051284
       },
       "isLocked": false,
-      "linkedName": "trenchtonetural "
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.2117307692307704,
-        "y": 6.953679487179487
+        "x": 0.7116666666666678,
+        "y": 5.953653846153847
       },
       "prevControl": {
-        "x": 2.130307692301878,
-        "y": 7.442064102558288
+        "x": 1.514012820518636,
+        "y": 5.9536538461596615
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "neturaltoshoot"
+      "linkedName": "middle-depot1"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.43157894736842206,
-      "rotationDegrees": 179.26175689717348
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -47,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -63.99665415548864
+    "rotation": 178.4656585002992
   },
   "reversed": false,
-  "folder": "trench shoot",
+  "folder": "middle",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

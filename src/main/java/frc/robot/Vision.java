@@ -21,6 +21,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 public class Vision {
 
     String k_limelightName = "limelight"; //default name of the limelight, can be changed in the limelight settings   
+    String k_limelightfollowerName = "followerlimelight"; //2nd limelight 
 
     final Distance k_xOffset = Inch.of(-13); //front/back offest of camera to robot center (positive is forward, negative is backward)
     final Distance k_yOffset = Inch.of(0); //left/right offset of camera to robot center (positive is left, negative is right)

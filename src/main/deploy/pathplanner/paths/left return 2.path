@@ -3,53 +3,64 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.769987179487181,
-        "y": 6.511807692307692
+        "x": 7.200205128205129,
+        "y": 7.081589743589743
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.595564102564104,
-        "y": 7.558346153846154
+        "x": 7.225082824421969,
+        "y": 6.832830622689739
       },
       "isLocked": false,
-      "linkedName": "neturaltoposition"
+      "linkedName": "left-return-2"
     },
     {
       "anchor": {
-        "x": 4.607115384615386,
-        "y": 7.430435897435898
+        "x": 7.8397564102564115,
+        "y": 4.314076923076923
       },
       "prevControl": {
-        "x": 5.665282051282053,
-        "y": 7.476948717948718
+        "x": 8.514192307692309,
+        "y": 4.44198717948718
       },
       "nextControl": {
-        "x": 2.5524560340933258,
-        "y": 7.340121200709654
+        "x": 7.473992190256152,
+        "y": 4.244707846869978
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.9559102564102573,
-        "y": 6.511807692307692
+        "x": 4.6885128205128215,
+        "y": 7.476948717948718
       },
       "prevControl": {
-        "x": 2.791284104443128,
-        "y": 6.699951865984412
+        "x": 6.816474358974359,
+        "y": 7.558346153846154
+      },
+      "nextControl": {
+        "x": 2.166929212244294,
+        "y": 7.380494700146097
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.130333333333334,
+        "y": 6.488551282051283
+      },
+      "prevControl": {
+        "x": 2.930333333333334,
+        "y": 6.638551282051282
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.0140350877192987,
-      "rotationDegrees": 174.63280574449706
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -63,13 +74,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -53.13010235415596
+    "rotation": 162.4075754378184
   },
   "reversed": false,
-  "folder": "trench shoot",
+  "folder": "left trench",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": -74.47588900324561
   },
   "useDefaultConstraints": true
 }

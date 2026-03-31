@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.68848717948718,
-        "y": 7.407179487179487
+        "x": 3.3280128205128223,
+        "y": 4.46524358974359
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.68848717948718,
-        "y": 7.407179487179487
+        "x": 3.025679487179488,
+        "y": 4.46524358974359
       },
       "isLocked": false,
-      "linkedName": "test"
+      "linkedName": "depot-middle"
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 6.0
+        "x": 6.47925641025826,
+        "y": 5.860628205121566
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 6.0
+        "x": 1.3163333333351828,
+        "y": 5.32573076922413
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,10 +45,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "trench shoot",
+  "folder": "middle",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 173.04704253182615
   },
   "useDefaultConstraints": true
 }

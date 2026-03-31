@@ -7,31 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "right approch 1 "
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
+            "pathName": "middle to depot 1 "
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "right return 1"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
+            "pathName": "depot to middle 1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "right approch 2"
+            "pathName": "middle to netural 1"
           }
         }
       ]
