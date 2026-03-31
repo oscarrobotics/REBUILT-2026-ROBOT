@@ -119,7 +119,7 @@ public class Hopper extends SubsystemBase
 
          return Commands.sequence(
             new InstantCommand(this::startHopper, this),
-            new WaitCommand(1)
+            new WaitCommand(0)
          );
       }
 
@@ -127,7 +127,7 @@ public class Hopper extends SubsystemBase
 
          return Commands.sequence(
             new InstantCommand(this::stopHopper,this),
-            new WaitCommand(1)
+            new WaitCommand(0)
          );
       }
 
