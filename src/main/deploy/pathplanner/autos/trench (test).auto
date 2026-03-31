@@ -13,37 +13,6 @@
                 "data": {
                   "pathName": "right approch 1 "
                 }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 1.0
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "extendintakearm"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "autointakefuel"
-                      }
-                    }
-                  ]
-                }
               }
             ]
           }
@@ -62,18 +31,6 @@
                 "type": "path",
                 "data": {
                   "pathName": "right return 1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "autointakefuelstop"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.2
                 }
               }
             ]

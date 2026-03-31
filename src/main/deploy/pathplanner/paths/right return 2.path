@@ -3,57 +3,57 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.8746410256410275,
-        "y": 2.6977564102564098
+        "x": 7.962717803030303,
+        "y": 2.7560416666666665
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.887780733921717,
-        "y": 2.947410867589537
+        "x": 7.912190140559919,
+        "y": 3.43073008076185
       },
       "isLocked": false,
       "linkedName": "right-approch-2"
     },
     {
       "anchor": {
-        "x": 7.514166666666668,
-        "y": 3.779179487179487
+        "x": 7.555776515151514,
+        "y": 3.5865340909090904
       },
       "prevControl": {
-        "x": 7.762040910751362,
-        "y": 4.3377693330041485
+        "x": 7.767761763668422,
+        "y": 3.719056747127658
       },
       "nextControl": {
-        "x": 6.6885641025641025,
-        "y": 1.9186666666666659
+        "x": 6.585446360157948,
+        "y": 2.9799318369863816
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.618743589743591,
-        "y": 0.6279358974358968
+        "x": 5.678863636363636,
+        "y": 0.6465909090909088
       },
       "prevControl": {
-        "x": 6.142038461538462,
-        "y": 0.639564102564101
+        "x": 7.101191922045106,
+        "y": 0.7125142133916126
       },
       "nextControl": {
-        "x": 3.4782638693086163,
-        "y": 0.6192299453715083
+        "x": 4.447920171579893,
+        "y": 0.5895380743671575
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.3396410256410265,
-        "y": 0.7791025641025646
+        "x": 3.0628125,
+        "y": 0.7628598484848477
       },
       "prevControl": {
-        "x": 3.589329110360488,
-        "y": 0.791586968338537
+        "x": 3.5601929775177985,
+        "y": 0.9190137556488936
       },
       "nextControl": null,
       "isLocked": false,
@@ -86,10 +86,17 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "autointakefuelstop",
+      "waypointRelativePos": 1.3810741687979504,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 2.14,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.14,
+    "maxAcceleration": 7.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -100,10 +107,10 @@
     "rotation": -113.02549200852799
   },
   "reversed": false,
-  "folder": "right trench ",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 92.02136494035605
+    "rotation": 108.79988515865267
   },
   "useDefaultConstraints": false
 }

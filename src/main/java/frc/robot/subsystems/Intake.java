@@ -365,7 +365,7 @@ public class Intake extends SubsystemBase
    public Command auto_outtake_fuel_command(){
 
         return run(()->{set_intake_speed(AngularVelocity.ofBaseUnits(-80, RotationsPerSecond));})
-            .withTimeout(2)
+            .withTimeout(1)
             .andThen(this::stop_intake)
             .andThen(this::has_fuel_false);
 
