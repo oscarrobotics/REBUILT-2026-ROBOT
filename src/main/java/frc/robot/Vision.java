@@ -74,6 +74,9 @@ public class Vision {
              0
              );
 
+            //  System.out.println(currentPose.getRotation().getDegrees());
+
+
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(k_limelightName);
         //  LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(k_limelightName);
         boolean reject_update = false;
@@ -91,12 +94,13 @@ public class Vision {
 
             lastTimestamp = mt2.timestampSeconds;
             
-            if(mt2.tagCount < 1) {
+            if(mt2.tagCount < 2) {
                 reject_update = true;
             }
             // if(mt2.tagCount<2 && Drive)
             if (!reject_update)
-            {
+            {  
+                // LimelightHelpers.get
                 
                 m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7,0.7,9999999));
                 m_poseEstimator.addVisionMeasurement(mt2.pose, lastTimestamp);
