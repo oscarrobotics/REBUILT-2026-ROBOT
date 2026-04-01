@@ -10,8 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
-
-
+import edu.wpi.first.wpilibj.DriverStation;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -23,12 +22,7 @@ public class Vision {
     String k_limelightName = "limelight"; //default name of the limelight, can be changed in the limelight settings   
     String k_limelightfollowerName = "followerlimelight"; //2nd limelight 
 
-    final Distance k_xOffset = Inch.of(-13); //front/back offest of camera to robot center (positive is forward, negative is backward)
-    final Distance k_yOffset = Inch.of(0); //left/right offset of camera to robot center (positive is left, negative is right)
-    final Distance k_zOffset = Inch.of(22-4); //vertical offset of camera to robot center (positive is up, negative is down)
-    final Angle k_rollOffset = Degree.of(0.50); //roll offset of camera to robot center (positive is clockwise, negative is counterclockwise)    
-    final Angle k_pitchOffset = Degree.of(27.150); //pitch offset of camera to robot center (positive is up, negative is down) - 12.4 original 
-    final Angle k_yawOffset = Degree.of(180.0); //yaw offset of camera to robot center (positive is left, negative is right)
+    
 
     private CommandSwerveDrivetrain m_poseEstimator;
 
@@ -47,15 +41,27 @@ public class Vision {
         LimelightHelpers.setPipelineIndex(k_limelightName, 0);
 
         LimelightHelpers.setCameraPose_RobotSpace(k_limelightName, 
-        k_xOffset.in(Meter), 
-        k_yOffset.in(Meter), 
-        k_zOffset.in(Meter), 
-        k_rollOffset.in(Degree), 
-        k_pitchOffset.in(Degree), 
-        k_yawOffset.in(Degree));
+        Inch.of(-13).in(Meter), 
+        Inch.of(0).in(Meter), 
+        Inch.of(22-4).in(Meter), 
+        Degree.of(0.50).in(Degree), 
+        Degree.of(27.150).in(Degree), 
+        Degree.of(180.0).in(Degree));
+
+        LimelightHelpers.setCameraPose_RobotSpace(k_limelightfollowerName, 
+        Inch.of(-12).in(Meter), 
+        Inch.of(-12).in(Meter), 
+        Inch.of(22-2).in(Meter), 
+        Degree.of(0.0).in(Degree), 
+        Degree.of(12).in(Degree), 
+        Degree.of(0).in(Degree));
 
 
 
+        //limelight configuration 
+        // LimelightHelpers.SetIMUAsssitAlpha(k_limelightName, 0.001);
+        // LimelightHelpers.SetIMUAsssitAlpha(k_limelightfollowerName, 0.001);
+        
 
 
     }
@@ -63,6 +69,28 @@ public class Vision {
     double lastTimestamp = 0.0;  
     public void megaTagPose_periodic()
     {
+
+
+        // update gyro seed if disabled 
+        if (DriverStation.isDisabled()){
+            LimelightHelpers.SetIMUMode(k_limelightName, 1);
+            LimelightHelpers.SetIMUMode(k_limelightfollowerName, 1);
+        }
+
+
+        //set gyro to be internal if running 
+        if (!DriverStation.isDisabled()){
+            LimelightHelpers.SetIMUMode(k_limelightName, 4);
+            LimelightHelpers.SetIMUMode(k_limelightfollowerName, 4);
+        }
+
+
+
+        //set update behaviour depending on teleop or auton
+
+
+
+
         Pose2d currentPose = m_poseEstimator.samplePoseNow();
         // System.out.println(currentPose);
         LimelightHelpers.SetRobotOrientation(k_limelightName,
@@ -73,25 +101,35 @@ public class Vision {
              0, 
              0
              );
+        
+        LimelightHelpers.SetRobotOrientation(k_limelightfollowerName, 
+        currentPose.getRotation().getDegrees(),
+        0,
+        0,
+        0,
+        0,
+        0
+        );
 
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(k_limelightName);
+        LimelightHelpers.PoseEstimate shooter_result = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(k_limelightName);
+        LimelightHelpers.PoseEstimate forward_result = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(k_limelightfollowerName);
         //  LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(k_limelightName);
         boolean reject_update = false;
 
 
-        // if (Math.abs(m_poseEstimator.getPigeon2().getAngularVelocityZWorld().getValueAsDouble())>360){ //if the robot is rotating faster than 360 degrees per second, ignore vision measurements to prevent pose estimator from diverging
+        if (Math.abs(m_poseEstimator.getPigeon2().getAngularVelocityZWorld().getValueAsDouble())>360){ //if the robot is rotating faster than 360 degrees per second, ignore vision measurements to prevent pose estimator from diverging
         
-        //     reject_update = true;
-        // }
+            reject_update = true;
+        }
 
-        if (mt2 != null) {
+        if (shooter_result != null) {
             // System.out.println("Cameraing");
             
         
 
-            lastTimestamp = mt2.timestampSeconds;
+            lastTimestamp = shooter_result.timestampSeconds;
             
-            if(mt2.tagCount < 1) {
+            if(shooter_result.tagCount < 1) {
                 reject_update = true;
             }
             // if(mt2.tagCount<2 && Drive)
@@ -99,7 +137,7 @@ public class Vision {
             {
                 
                 m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7,0.7,9999999));
-                m_poseEstimator.addVisionMeasurement(mt2.pose, lastTimestamp);
+                m_poseEstimator.addVisionMeasurement(shooter_result.pose, lastTimestamp);
             }
 
         }
