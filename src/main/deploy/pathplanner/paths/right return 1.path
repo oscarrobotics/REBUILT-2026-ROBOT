@@ -92,7 +92,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "autointakefuelstop",
+      "name": "autointakefuelstop_trigger",
       "waypointRelativePos": 1.365728900255753,
       "endWaypointRelativePos": null,
       "command": null

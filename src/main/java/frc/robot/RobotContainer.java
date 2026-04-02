@@ -21,6 +21,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
@@ -93,6 +94,8 @@ public class RobotContainer {
         Shuffleboard.getTab("autonomous path").add(autoChooser);
 
         configureBindings();
+
+        configureAutoBindings();
 
     }
 
@@ -210,6 +213,7 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         drivestick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        drivestick.start().onTrue(drivetrain.runOnce(vision::seedFieldCentricFromCamera));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -267,6 +271,20 @@ public class RobotContainer {
 
         intake.setDefaultCommand(new InstantCommand(()->intake.active_wiggle(operatorstick.getRightY()), intake));
         
+
+
+
+
+
+    }
+
+    private void configureAutoBindings(){
+
+
+        new EventTrigger("autointakefuel_trigger").onTrue(intake.auto_intake_fuel_command());
+        new EventTrigger("autointakefuelstop_trigger").onTrue(intake.auto_intake_fuel_stop());
+        new EventTrigger("extendintakearm_trigger").onTrue(new InstantCommand(intake:: extendArm));
+        new EventTrigger("retractintakearm_trigger").onTrue(new InstantCommand(intake::retractArm));
     }
             
      

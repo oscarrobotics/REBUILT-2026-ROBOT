@@ -94,26 +94,25 @@ public class Vision {
         Pose2d currentPose = m_poseEstimator.samplePoseNow();
         // System.out.println(currentPose);
         LimelightHelpers.SetRobotOrientation(k_limelightName,
-            currentPose.getRotation().getDegrees() , 
-            0, 
-            0, 
-            0,
-             0, 
-             0
+            currentPose.getRotation().getDegrees(),0,0,0,0,0
              );
         
         LimelightHelpers.SetRobotOrientation(k_limelightfollowerName, 
-        currentPose.getRotation().getDegrees(),
-        0,
-        0,
-        0,
-        0,
-        0
-        );
+            currentPose.getRotation().getDegrees(),0,0,0,0,0
+            );
 
         LimelightHelpers.PoseEstimate shooter_result = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(k_limelightName);
         LimelightHelpers.PoseEstimate forward_result = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(k_limelightfollowerName);
         //  LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(k_limelightName);
+        
+        process_mt_result(shooter_result);
+        process_mt_result(forward_result);
+        
+
+
+    }
+
+    public void process_mt_result(PoseEstimate poseEstimate){
         boolean reject_update = false;
 
 
@@ -122,14 +121,15 @@ public class Vision {
             reject_update = true;
         }
 
-        if (shooter_result != null) {
+        if (poseEstimate != null) {
             // System.out.println("Cameraing");
             
         
 
-            lastTimestamp = shooter_result.timestampSeconds;
             
-            if(shooter_result.tagCount < 1) {
+            
+            if(poseEstimate.tagCount < 1 || poseEstimate.tagCount < 2 && DriverStation.isAutonomous())
+              {
                 reject_update = true;
             }
             // if(mt2.tagCount<2 && Drive)
@@ -138,16 +138,17 @@ public class Vision {
                 // LimelightHelpers.get
                 
                 m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7,0.7,9999999));
-                m_poseEstimator.addVisionMeasurement(shooter_result.pose, lastTimestamp);
+                m_poseEstimator.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
             }
 
         }
-        else {
-            lastTimestamp = lastTimestamp+0.02; //if no target is detected, increment the timestamp to prevent the pose estimator from rejecting future measurements due to old timestamps
-        }
-
         
 
+
+    }
+
+    public void seedFieldCentricFromCamera(){
+        m_poseEstimator.seedFieldCentric(new Rotation2d(m_poseEstimator.samplePoseNow().getRotation().getDegrees()));
     }
 }
 

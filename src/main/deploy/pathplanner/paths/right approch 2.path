@@ -54,7 +54,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "extendintakearm",
+      "name": "extendintakearm_trigger",
       "waypointRelativePos": 0.92,
       "endWaypointRelativePos": null,
       "command": {

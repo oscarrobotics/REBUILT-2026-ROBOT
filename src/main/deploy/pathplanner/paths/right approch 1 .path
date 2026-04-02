@@ -33,13 +33,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "extendintakearm",
+      "name": "extendintakearm_trigger",
       "waypointRelativePos": 0.4279624893435643,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "autointakefuel",
+      "name": "autointakefuel_trigger",
       "waypointRelativePos": 0.8371696504688837,
       "endWaypointRelativePos": null,
       "command": null

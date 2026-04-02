@@ -10,12 +10,14 @@ import edu.wpi.first.units.VelocityUnit;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.networktables.GenericEntry;
@@ -44,7 +46,9 @@ public class Intake extends SubsystemBase
 {
    //identifying motor 
 
-   final TalonFX m_intake_roller_motor ;
+   final TalonFX m_intake_roller_motor;
+   final TalonFX m_intake_roller_follower;
+
    final TalonFXConfiguration m_intake_roller_config;
 
    final MotionMagicVelocityVoltage m_MagicVelocityVoltage = new MotionMagicVelocityVoltage(0);
@@ -83,7 +87,9 @@ public class Intake extends SubsystemBase
 
       public Intake(CommandSwerveDrivetrain pose_estimator){
 
-         m_intake_roller_motor =new TalonFX(53);
+         m_intake_roller_motor = new TalonFX(53);
+         m_intake_roller_follower = new TalonFX(55);
+        
          m_intake_roller_config = new TalonFXConfiguration();
          targetVelocity = 0;
          targetVelocityEntry.setDouble(targetVelocity);
@@ -114,7 +120,7 @@ public class Intake extends SubsystemBase
       m_intake_roller_config.Slot0.kI = kIEntry.getDouble(0.0);  // no output for integrated error
       m_intake_roller_config.Slot0.kD = kDEntry.getDouble(0.0);  // no output for error derivative
       
-      m_intake_roller_config.CurrentLimits.StatorCurrentLimit=180.0;
+      m_intake_roller_config.CurrentLimits.StatorCurrentLimit=60.0;
       //magic motion settings 
       var motionMagicConfigs = m_intake_roller_config.MotionMagic;
       motionMagicConfigs.MotionMagicAcceleration = 100; // Target acceleration of 400 rps/s (0.25 seconds to max)
@@ -126,6 +132,12 @@ public class Intake extends SubsystemBase
       intake_roller_Output.NeutralMode = NeutralModeValue.Coast;
       intake_roller_Output.DutyCycleNeutralDeadband = 0.02; 
       m_intake_roller_motor.getConfigurator().apply(intake_roller_Output);
+
+      m_intake_roller_follower.getConfigurator().apply(m_intake_roller_config);
+
+      m_intake_roller_follower.setControl(new Follower(m_intake_roller_motor.getDeviceID(), MotorAlignmentValue.Opposed));
+
+
 
 
 
