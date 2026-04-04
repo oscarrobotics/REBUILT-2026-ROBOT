@@ -139,7 +139,7 @@ public class Feeder extends SubsystemBase
 
          return Commands.sequence(
             new InstantCommand(this::startFeeder,this),
-            new WaitCommand(0.25)
+            new WaitCommand(0.04)
          );
          
       }
@@ -170,7 +170,7 @@ public class Feeder extends SubsystemBase
                   m_feeder_motor.getRotorVelocity().getValueAsDouble());
           motorTemperatureEntry.setDouble(m_feeder_motor.getDeviceTemp().getValueAsDouble());
 
-          if (m_shooting_reset_timer.get()>5){
+          if (m_shooting_reset_timer.get()>1){
             m_shootingtimer.reset();
           }
 

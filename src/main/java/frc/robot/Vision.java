@@ -20,7 +20,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 public class Vision {
 
     String k_limelightName = "limelight"; //default name of the limelight, can be changed in the limelight settings   
-    String k_limelightfollowerName = "followerlimelight"; //2nd limelight 
+    String k_limelightfollowerName = "limelight-follow"; //2nd limelight 
 
     
 
@@ -47,13 +47,15 @@ public class Vision {
         Degree.of(0.50).in(Degree), 
         Degree.of(27.150).in(Degree), 
         Degree.of(180.0).in(Degree));
-
+        
+        LimelightHelpers.setPipelineIndex(k_limelightfollowerName, 0);
+        
         LimelightHelpers.setCameraPose_RobotSpace(k_limelightfollowerName, 
         Inch.of(-12).in(Meter), 
         Inch.of(-12).in(Meter), 
-        Inch.of(22-2).in(Meter), 
-        Degree.of(0.0).in(Degree), 
-        Degree.of(12).in(Degree), 
+        Inch.of(22-3).in(Meter), 
+        Degree.of(5).in(Degree), 
+        Degree.of(9).in(Degree), 
         Degree.of(0).in(Degree));
 
 
@@ -128,7 +130,7 @@ public class Vision {
 
             
             
-            if(poseEstimate.tagCount < 1 || poseEstimate.tagCount < 2 && DriverStation.isAutonomous())
+            if(poseEstimate.tagCount < 1 || (poseEstimate.tagCount < 2 && DriverStation.isAutonomous()))
               {
                 reject_update = true;
             }
@@ -137,7 +139,7 @@ public class Vision {
             {  
                 // LimelightHelpers.get
                 
-                m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7,0.7,9999999));
+                m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.8,0.8,9999999));
                 m_poseEstimator.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
             }
 

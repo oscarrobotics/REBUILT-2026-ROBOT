@@ -20,8 +20,8 @@
         "y": 1.0232948717948727
       },
       "prevControl": {
-        "x": 7.990923076923076,
-        "y": 0.6163076923076924
+        "x": 8.163849154746423,
+        "y": 0.7384265279583884
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,20 +34,20 @@
   "eventMarkers": [
     {
       "name": "extendintakearm_trigger",
-      "waypointRelativePos": 0.4279624893435643,
+      "waypointRelativePos": 0.26135105204872927,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "autointakefuel_trigger",
-      "waypointRelativePos": 0.8371696504688837,
+      "waypointRelativePos": 0.3477297895902525,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 10.0,
     "maxAngularVelocity": 400.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -63,5 +63,5 @@
     "velocity": 0,
     "rotation": 0.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

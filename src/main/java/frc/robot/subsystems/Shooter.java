@@ -226,7 +226,7 @@ public class Shooter extends SubsystemBase{
       
         public boolean shooteratSpeed(){
           double currentRPM = m_shooterleader_encoder.getVelocity();
-          double tolerance = 100;
+          double tolerance = 1000;
           return m_targetRPM.isNear(RPM.of(currentRPM), RPM.of(tolerance));
         }
 
@@ -272,7 +272,7 @@ public class Shooter extends SubsystemBase{
         public Command autoshoot(){
           
           return runOnce(() -> {StartShooter(get_auto_speed());})
-          .andThen(new WaitCommand(0.4));
+          .andThen(new WaitCommand(0.1));
           // .until(this::shooteratSpeed)
 
             // .withTimeout(2);

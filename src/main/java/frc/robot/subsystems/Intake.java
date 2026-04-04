@@ -146,9 +146,9 @@ public class Intake extends SubsystemBase
     // m_intake_arm_config.Slot0.kS = kSEntry.getDouble(0.25); // Add 0.25 V output to overcome static friction
     m_intake_arm_config.Slot0.kV = kVEntry.getDouble(0.22); // A velocity target of 1 rps results in 0.12 V output
     m_intake_arm_config.Slot0.kA = kAEntry.getDouble(0.02); // An acceleration of 1 rps/s requires 0.01 V output
-    m_intake_arm_config.Slot0.kP = kPEntry.getDouble(0.21); // An error of 1 rps results in 0.11 V output
+    m_intake_arm_config.Slot0.kP = kPEntry.getDouble(0.41); // An error of 1 rps results in 0.11 V output
     m_intake_arm_config.Slot0.kI = kIEntry.getDouble(0.001);  // no output for integrated error
-    m_intake_arm_config.Slot0.kD = kDEntry.getDouble(0.0);  // no output for error derivative
+    m_intake_arm_config.Slot0.kD = kDEntry.getDouble(0.004);  // no output for error derivative
 
     m_intake_arm_config.CurrentLimits.StatorCurrentLimit = 30;
 
@@ -289,7 +289,7 @@ public class Intake extends SubsystemBase
       public ParallelRaceGroup auto_wiggle(){
 
          return new SequentialCommandGroup(
-            new InstantCommand(()->m_intake_arm_motor.setControl(m_position_request.withPosition(arm_delta.div(2))), this),
+            new InstantCommand(()->m_intake_arm_motor.setControl(m_position_request.withPosition(arm_delta.div(1.5))), this),
             new WaitCommand(0.8),
             new InstantCommand(()->m_intake_arm_motor.setControl(m_position_request.withPosition(arm_delta)), this),
             new WaitCommand(0.8)
@@ -362,16 +362,15 @@ public class Intake extends SubsystemBase
 
    public Command auto_intake_fuel_command(){
 
-         return run(this::startRoller)
-         .withTimeout(0.25);
+         return new InstantCommand(this::startRoller);
          // .andThen(this::stop_intake)
          // .andThen(this::has_fuel_false);
       }
 
    public Command auto_intake_fuel_stop(){
-      return run(()->{
+      return new InstantCommand(()->{
          set_intake_speed(AngularVelocity.ofBaseUnits(0, RotationsPerSecond));
-      }).withTimeout(0.1);
+      });
    }
 
    public Command auto_outtake_fuel_command(){

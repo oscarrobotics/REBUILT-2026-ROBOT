@@ -211,6 +211,9 @@ public class RobotContainer {
         // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
+        drivestick.rightBumper().onTrue(new InstantCommand(intake::toggle_roller, intake));
+        drivestick.rightTrigger().onTrue(new InstantCommand(intake::reverseRoller, intake)).onFalse(new InstantCommand(intake::stopRoller));
+
         // Reset the field-centric heading on left bumper press.
         drivestick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivestick.start().onTrue(drivetrain.runOnce(vision::seedFieldCentricFromCamera));
@@ -239,7 +242,7 @@ public class RobotContainer {
         .whileTrue(new RepeatCommand(new InstantCommand(feeder::startFeeder)))
         .onFalse(new InstantCommand(hopper::stopHopper)).onFalse(new InstantCommand(feeder::stopFeeder));
 
-        operatorstick.rightTrigger().and(()->feeder.been_shooting(4)).whileTrue(intake.auto_wiggle());
+        operatorstick.rightTrigger().and(()->feeder.been_shooting(5)).whileTrue(intake.auto_wiggle());
 
 
         operatorstick.povUp().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.close_speed;})); //near hub
@@ -262,7 +265,7 @@ public class RobotContainer {
         operatorstick.y().onTrue(new InstantCommand(intake::toggle_arm, intake));
         operatorstick.x().onTrue(new InstantCommand(intake::reverseRoller, intake)).onFalse(new InstantCommand(intake::stopRoller));
 
-        operatorstick.leftTrigger().onTrue(new InstantCommand(intake::toggle_roller, intake));
+        // operatorstick.leftTrigger().onTrue(new InstantCommand(intake::toggle_roller, intake));
 
 
         operatorstick.start().onTrue(new InstantCommand(intake::set_position_as_out, intake));

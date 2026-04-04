@@ -68,10 +68,17 @@
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "autointakefuelstop",
+      "waypointRelativePos": 1.8139534883720863,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 10.0,
     "maxAngularVelocity": 400.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -87,5 +94,5 @@
     "velocity": 0,
     "rotation": -102.38075692880741
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

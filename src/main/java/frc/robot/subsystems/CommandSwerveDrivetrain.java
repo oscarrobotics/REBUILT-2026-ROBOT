@@ -533,7 +533,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Command instant_autoAim(SwerveRequest.FieldCentricFacingAngle locked){
 
         return applyRequest(()->locked.withHeadingPID(5,0, 0.01)
-                    .withTargetDirection(new Rotation2d(get_target_angle()))).withTimeout(1);
+                    .withTargetDirection(new Rotation2d(get_target_angle()))).withTimeout(0.5);
     }
 
     

@@ -47,10 +47,23 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "extendintakearm",
+      "waypointRelativePos": 1.3732004429678861,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "autointakefuel",
+      "waypointRelativePos": 1.4573643410852652,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 10.0,
     "maxAngularVelocity": 400.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -66,5 +79,5 @@
     "velocity": 0,
     "rotation": 142.16723872851978
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
