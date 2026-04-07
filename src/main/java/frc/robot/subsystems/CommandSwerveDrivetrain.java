@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -16,6 +17,8 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.controllers.PPLTVController;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -506,6 +509,34 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return target_hub_distance;
 
     };
+
+
+
+
+
+    public Command navigate_2_nearest_trench(){
+
+        String target_trench = "Left Trench";
+
+        PathPlannerPath path = null;
+        try{
+         path = PathPlannerPath.fromPathFile(target_trench);
+        }
+        catch(Exception e){
+            System.out.println(e);
+        
+        }
+        // Create the constraints to use while pathfinding. The constraints defined in the path will only be used for the path.
+        PathConstraints constraints = new PathConstraints(
+        3.0, 4.0,
+        Degrees.of(520).in(Radians),Degrees.of(720).in(Radians));
+
+        // Since AutoBuilder is configured, we can use it to build pathfinding commands
+        return  AutoBuilder.pathfindThenFollowPath(
+        path,
+        constraints);
+    }
+
 
     /**
      * Runs the SysId Quasistatic test in the given direction for the routine
