@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.*;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.BlockingDeque;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -43,6 +44,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
@@ -511,12 +513,54 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     };
 
 
+    public boolean in_netral_zone(){
 
+        
+
+        double start = Inches.of(182).in(Meters);
+        double end  = Inches.of(182+143*2).in(Meters);
+        //neutral end 
+        double location = samplePoseNow().getX();
+        
+        return start<location&&location<end;
+    }
+    public boolean in_alliance_zone(){
+
+        double start = Inches.of(0).in(Meters);
+        double end  = Inches.of(182).in(Meters);
+        //neutral end 
+        double location = samplePoseNow().getX();
+        
+        return start<location&&location<end;
+    }
+    public boolean in_enemy_zone(){
+        double start = Inches.of(182+143*2).in(Meters);
+        double end  = Inches.of(182+143*2+182).in(Meters);
+        //neutral end 
+        double location = samplePoseNow().getX();
+        
+        return start<location&&location<end;
+    }
 
 
     public Command navigate_2_nearest_trench(){
 
-        String target_trench = "Left Trench";
+        double field_split = Inches.of(159).in(Meters);
+
+        if (!in_alliance_zone()){
+            return new InstantCommand();
+        }
+
+        Pose2d location = samplePoseNow();
+
+        String target_trench;
+        if( location.getY()>field_split){
+            target_trench = "leftTrench";
+        }
+        else{
+             target_trench = "rightTrench";
+        }
+
 
         PathPlannerPath path = null;
         try{
@@ -528,7 +572,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
         // Create the constraints to use while pathfinding. The constraints defined in the path will only be used for the path.
         PathConstraints constraints = new PathConstraints(
-        3.0, 4.0,
+        3.0, 8.0,
         Degrees.of(520).in(Radians),Degrees.of(720).in(Radians));
 
         // Since AutoBuilder is configured, we can use it to build pathfinding commands

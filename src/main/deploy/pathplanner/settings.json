@@ -3,6 +3,7 @@
   "robotLength": 0.875,
   "holonomicMode": true,
   "pathFolders": [
+    "Navigation",
     "left trench",
     "middle",
     "right trench "
