@@ -54,7 +54,7 @@ public class Hopper extends SubsystemBase
 
     public Hopper(CommandSwerveDrivetrain pose_estimator){
 
-         m_hopper_motor =new TalonFX(51);
+         m_hopper_motor = new TalonFX(51);
          m_hopper_encoder = new TalonFXConfiguration(); 
 
         

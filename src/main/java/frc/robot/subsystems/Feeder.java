@@ -49,12 +49,12 @@ public class Feeder extends SubsystemBase
      private double targetVelocity = 0;
 
      //default feeder velocity 
-     private static final double default_velocity = -60.0; //RPS - in consideration of shooter at 5767 RPM
+     private static final double default_velocity = -80.0; // -60 RPS - in consideration of shooter at 5767 RPM
 
 
       public Feeder(CANBus canbus, CommandSwerveDrivetrain pose_estimator){
 
-         m_feeder_motor =new TalonFX(54, canbus);
+         m_feeder_motor =new TalonFX(54);//, canbus, try kCANBus, try Canivore1
          m_feeder_encoder = new TalonFXConfiguration(); 
 
          targetVelocity = 0;
@@ -72,7 +72,7 @@ public class Feeder extends SubsystemBase
 
       // set slot 0 gains + from phoneix tuner documentation 
       m_feeder_config.Slot0.kS = kSEntry.getDouble(0.25); // Add 0.25 V output to overcome static friction
-      m_feeder_config.Slot0.kV = kVEntry.getDouble(0.12); // A velocity target of 1 rps results in 0.12 V output
+      m_feeder_config.Slot0.kV = kVEntry.getDouble(0.12); // 0.12 A velocity target of 1 rps results in 0.12 V output
       m_feeder_config.Slot0.kA = kAEntry.getDouble(0.01); // An acceleration of 1 rps/s requires 0.01 V output
       m_feeder_config.Slot0.kP = kPEntry.getDouble(0.11); // An error of 1 rps results in 0.11 V output
       m_feeder_config.Slot0.kI = kIEntry.getDouble(0.0);  // no output for integrated error

@@ -50,14 +50,30 @@ public class Robot extends TimedRobot {
         m_timeAndJoystickReplay.update();
         m_robotContainer.periodic();
         CommandScheduler.getInstance().run(); 
-       
-    }
+
+/*if (kUseLimelight) {
+    var driveState = m_robotContainer.drivetrain.getState();
+    double headingDeg = */
+}       
+    //}
 
     @Override
     public void robotInit() {
         // m_ShuffleboardTab = Shuffleboard.getTab("Driver and Operator");
         // m_phase = m_ShuffleboardTab.add("phase", m_ShuffleboardTab).getEntry();
         // m_time = m_ShuffleboardTab.add("match time", 0.0).getEntry();
+
+/*Due to the nature of how Java works, the first run of a path following 
+command could have a significantly higher delay compared with subsequent runs, 
+as all the classes involved will need to be loaded.
+
+To help alleviate this issue, you can run a warmup command in the background when code starts.
+
+This command will not control your robot, it will simply run through a 
+full path following command to warm up the library.
+
+ */
+        FollowPathCommand.warmupCommand().schedule();
     }
 
     @Override

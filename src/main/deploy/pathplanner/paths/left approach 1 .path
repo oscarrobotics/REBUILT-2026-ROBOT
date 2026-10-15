@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.735000000000001,
-        "y": 7.372294871794873
+        "x": 4.299857651245553,
+        "y": 7.36497034400949
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.735000000000004,
-        "y": 7.372294871794873
+        "x": 5.299857651245556,
+        "y": 7.36497034400949
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.769987179487181,
-        "y": 7.0350769230769234
+        "x": 7.861150652433734,
+        "y": 5.062502965604002
       },
       "prevControl": {
-        "x": 7.723474358974359,
-        "y": 7.593230769230768
+        "x": 8.044056939501779,
+        "y": 8.150391459074733
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,19 +29,46 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.7575462512171346,
+      "constraints": {
+        "maxVelocity": 3.4,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 400.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.7088607594936709,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 10.0,
+        "maxAngularVelocity": 400.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "extendintakearm",
-      "waypointRelativePos": 0.3898117386489474,
-      "endWaypointRelativePos": null,
+      "waypointRelativePos": 0.18695228821811144,
+      "endWaypointRelativePos": 0.5296981499513197,
       "command": null
     },
     {
       "name": "autointakefuel",
-      "waypointRelativePos": 0.5049833887043189,
-      "endWaypointRelativePos": null,
+      "waypointRelativePos": 0.5024342745861741,
+      "endWaypointRelativePos": 1.0,
       "command": null
     }
   ],
@@ -55,7 +82,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -102.38075692880741
+    "rotation": -91.21887523492319
   },
   "reversed": false,
   "folder": "left trench",

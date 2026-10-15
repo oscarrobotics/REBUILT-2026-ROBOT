@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -19,13 +20,14 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.events.EventTrigger;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
@@ -35,13 +37,13 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climber;
+//import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hopper;
 import frc.robot.Vision;
@@ -49,6 +51,25 @@ import frc.robot.Vision;
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+
+
+    // Shooter spins immediately, hopper+feeder start at 0.3 s, arm starts squishing at 0.75 s.
+private Command shootSequence(Supplier<AngularVelocity> speed) {
+    return Commands.parallel(
+        shooter.runEnd(() -> shooter.StartShooter(speed.get()), shooter::StopShooter),
+
+        Commands.waitSeconds(1).andThen( //time shooter windup
+            Commands.startEnd(
+                () -> { hopper.startHopper(); feeder.startFeeder(); intakeRoller.startRoller(); },
+                () -> { hopper.stopHopper();  feeder.stopFeeder(); intakeRoller.stopRoller(); },
+                hopper, feeder, intakeRoller)),//check if this works Gino!
+
+        Commands.waitSeconds(0.75).andThen(
+            arm.squish_arm_command(0, 1)) // 15 rotations in, over 1.5 seconds
+            //Youre going to the trashcan if you dont work
+    );
+}
+
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -77,9 +98,10 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public final Shooter shooter = new Shooter(drivetrain);
-    public final Intake intake =   new Intake(drivetrain);
+    public final Arm arm = new Arm();
+    public final IntakeRoller intakeRoller = new IntakeRoller();
     public final Feeder feeder =   new Feeder(TunerConstants.kCANBus,drivetrain);
-    public final Climber climber = new Climber();
+   // public final Climber climber = new Climber();
     public final Hopper hopper =   new Hopper(drivetrain);
 
     public final Vision vision = new Vision(drivetrain);
@@ -151,11 +173,11 @@ public class RobotContainer {
         //             )
         // );
 
-        drivestick.povUp().and(intake::isDeployed)
-        .whileTrue(new InstantCommand(intake::startRoller, intake));
+        drivestick.povUp().and(arm::isDeployed)
+        .whileTrue(new InstantCommand(intakeRoller::startRoller, intakeRoller));
         
-        drivestick.povUp().and(intake::isDeployed).and(intake::roller_not_toggled)
-        .onFalse(intake.delay_stopRoller_Command(0.5));
+        drivestick.povUp().and(arm::isDeployed).and(intakeRoller::roller_not_toggled)
+        .onFalse(intakeRoller.delay_stopRoller_Command(0.5));
 
 
 
@@ -215,8 +237,8 @@ public class RobotContainer {
         // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        drivestick.rightBumper().onTrue(new InstantCommand(intake::toggle_roller, intake));
-        drivestick.rightTrigger().onTrue(new InstantCommand(intake::reverseRoller, intake)).onFalse(new InstantCommand(intake::stopRoller));
+        drivestick.rightBumper().onTrue(new InstantCommand(intakeRoller::toggle_roller, intakeRoller));
+        drivestick.rightTrigger().onTrue(new InstantCommand(intakeRoller::reverseRoller, intakeRoller)).onFalse(new InstantCommand(intakeRoller::stopRoller, intakeRoller));
 
         // Reset the field-centric heading on left bumper press.
         drivestick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
@@ -230,24 +252,27 @@ public class RobotContainer {
     public void configureSystemsBindings() {
         // Configure additional subsystems and bindings here.
 
-          //shooter command pressing right trigger - use joystick to adjust (min-optimatal-max)
-    
-        // operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.speed_setpoint.plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
-        // ).onFalse(shooter.stopCommand());
+// Left trigger: driver manual aim. Preset speed from the D-pad, left stick Y trims ±800 RPM.
+operatorstick.leftTrigger().whileTrue(shootSequence(() ->
+    shooter.speed_setpoint.plus(
+        RPM.of(800).times(-MathUtil.applyDeadband(operatorstick.getLeftY(), 0.1)))));
 
+// Right trigger: auto aim. Distance-based speed, left stick Y trims ±800 RPM.
+operatorstick.rightTrigger().whileTrue(shootSequence(() ->
+    shooter.get_auto_speed().plus(
+        RPM.of(800).times(-MathUtil.applyDeadband(operatorstick.getLeftY(), 0.1)))));
+//PLEASE IF THERE IS A GOD, WORK!
 
+/*//Ian's shooter code, probably better(?)
 
-
-        operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.get_auto_speed().plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
+operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.get_auto_speed().plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
         ).onFalse(shooter.stopCommand());
         
         operatorstick.rightTrigger().and(shooter::shooteratSpeed).and(shooter::shooterAimed).and(()->!operatorstick.leftBumper().getAsBoolean())
         .whileTrue(new RepeatCommand(new InstantCommand(hopper::startHopper)))
         .whileTrue(new RepeatCommand(new InstantCommand(feeder::startFeeder)))
         .onFalse(new InstantCommand(hopper::stopHopper)).onFalse(new InstantCommand(feeder::stopFeeder));
-
-        operatorstick.rightTrigger().and(()->feeder.been_shooting(5)).whileTrue(intake.auto_wiggle());
-
+ */
 
         operatorstick.povUp().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.close_speed;})); //near hub
         operatorstick.povDown().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.full_speed;})); //farthest away
@@ -255,10 +280,10 @@ public class RobotContainer {
         operatorstick.povRight().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.opt_speed;})); //mid-far way
    
 
-
+        
 
         //Feeder Controls
-        operatorstick.rightBumper().whileTrue(new InstantCommand(feeder::startFeeder, feeder)).onFalse(new InstantCommand(feeder::stopFeeder, feeder));
+        operatorstick.b().onTrue(new InstantCommand(feeder::startFeeder, feeder)).onFalse(new InstantCommand(feeder::stopFeeder, feeder));
         
         //Hopper Controls
         operatorstick.rightBumper().whileTrue(new RepeatCommand( new InstantCommand(hopper::startHopper, hopper))).onFalse(new InstantCommand(hopper::stopHopper, hopper));
@@ -266,17 +291,18 @@ public class RobotContainer {
         
 
         //drops intake 
-        operatorstick.y().onTrue(new InstantCommand(intake::toggle_arm, intake));
-        operatorstick.x().onTrue(new InstantCommand(intake::reverseRoller, intake)).onFalse(new InstantCommand(intake::stopRoller));
+        operatorstick.y().onTrue(new InstantCommand(arm::toggle_arm, arm));
+        operatorstick.x().onTrue(new InstantCommand(intakeRoller::reverseRoller, intakeRoller)).onFalse(new InstantCommand(intakeRoller::stopRoller, intakeRoller));
 
-        // operatorstick.leftTrigger().onTrue(new InstantCommand(intake::toggle_roller, intake));
-
-
-        operatorstick.start().onTrue(new InstantCommand(intake::set_position_as_out, intake));
+        // operatorstick.leftTrigger().onTrue(new InstantCommand(intakeRoller::toggle_roller, intakeRoller));
 
 
+    operatorstick.start().onTrue(new InstantCommand(arm::set_position_as_out, arm));
+//sets the sensor position as if the arm were out, i.e if the robot was reset
+//with the arm out. This fixes the sensor.
 
-        intake.setDefaultCommand(new InstantCommand(()->intake.active_wiggle(operatorstick.getRightY()), intake));
+
+    arm.setDefaultCommand(new InstantCommand(()->arm.active_wiggle(operatorstick.getRightY()), arm));
         
 
 
@@ -287,20 +313,22 @@ public class RobotContainer {
 
     private void configureAutoBindings(){
 
-
-        new EventTrigger("autointakefuel_trigger").onTrue(intake.auto_intake_fuel_command());
-        new EventTrigger("autointakefuelstop_trigger").onTrue(intake.auto_intake_fuel_stop());
-        new EventTrigger("extendintakearm_trigger").onTrue(new InstantCommand(intake:: extendArm));
-        new EventTrigger("retractintakearm_trigger").onTrue(new InstantCommand(intake::retractArm));
+//event trigger
+        new EventTrigger("autointakefuel_trigger").onTrue(intakeRoller.auto_intake_fuel_command());
+        new EventTrigger("autointakefuelstop_trigger").onTrue(intakeRoller.auto_intake_fuel_stop());
+        new EventTrigger("extendintakearm_trigger").onTrue(new InstantCommand(arm::extendArm));
+        new EventTrigger("retractintakearm_trigger").onTrue(new InstantCommand(arm::retractArm));
     }
             
      
     private void name_commands() {
-        NamedCommands.registerCommand("autointakefuel", intake.auto_intake_fuel_command());
-        NamedCommands.registerCommand("autointakefuelstop", intake.auto_intake_fuel_stop());
-        NamedCommands.registerCommand("autointakearmhalf", new InstantCommand(intake::half_deploy));
-        NamedCommands.registerCommand("extendintakearm", new InstantCommand(intake:: extendArm));
-        NamedCommands.registerCommand("retractintakearm", new InstantCommand(intake::retractArm));
+        
+        //commands
+        NamedCommands.registerCommand("autointakefuel", intakeRoller.auto_intake_fuel_command());
+        NamedCommands.registerCommand("autointakefuelstop", intakeRoller.auto_intake_fuel_stop());
+        NamedCommands.registerCommand("autointakearmhalf", new InstantCommand(arm::half_deploy));
+        NamedCommands.registerCommand("extendintakearm", new InstantCommand(arm::extendArm));
+        NamedCommands.registerCommand("retractintakearm", new InstantCommand(arm::retractArm));
         
         NamedCommands.registerCommand("autoshoot", shooter.autoshoot());
         NamedCommands.registerCommand("autoshootstop", new InstantCommand(shooter::StopShooter, shooter));
@@ -311,7 +339,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("autohopperstart", hopper.auto_start_hopper());
         NamedCommands.registerCommand("autohopperstop", hopper.auto_stop_hopper());
 
-        NamedCommands.registerCommand("armwiggle", intake.auto_wiggle());
+        NamedCommands.registerCommand("armwiggle", arm.auto_wiggle());
         NamedCommands.registerCommand("auto_aim", drivetrain.instant_autoAim(locked_drive));
        
     }
@@ -323,43 +351,5 @@ public class RobotContainer {
         /* Run the path selected from the auto chooser */
         
         return autoChooser.getSelected();
-        // Simple drive forward auton
-        // final var idle = new SwerveRequest.Idle();
-        // return autoChooser.getSelected();
-    //    return Commands.sequence(
-            // (near the hub) 
-            // extract intake 
-            // wait 0.5 second
-            // set shooter speed 1000
-            
-
-            // intake.auto_extract_out_intake_command(),
-    //         new InstantCommand(intake::half_deploy), new WaitCommand(0.5),
-    //         // drivetrain.applyRequest(() ->
-    //         //     locked_drive
-    //         //         // .withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-    //         //         // .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-    //         //         .withHeadingPID(5,0, 0.01)
-    //         //         .withTargetDirection(new Rotation2d(drivetrain.get_target_angle()))
-                    
-    //         // ),
-            
-    //         shooter.autoshoot(),
-    //         feeder.auto_feeder_start(),
-    //         hopper.auto_start_hopper(),
-    //         new WaitCommand(3), 
-    //         intake.auto_intake_fuel_command(),  
-    //         new WaitCommand(5),
-    //         new InstantCommand(shooter::StopShooter, shooter),
-    //         feeder.auto_feeder_end(),
-    //         hopper.auto_stop_hopper(),
-    //         intake.auto_intake_fuel_stop()
-        
-    //    );
-
-
     }
 }
-
-
-

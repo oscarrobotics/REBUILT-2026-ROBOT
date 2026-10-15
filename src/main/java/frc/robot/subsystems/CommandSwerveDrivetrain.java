@@ -21,10 +21,12 @@ import com.pathplanner.lib.controllers.PPLTVController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.math.numbers.N1;
@@ -69,8 +71,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
-    public Pose2d red_hub = new Pose2d(11.9,4.05, new Rotation2d(0));///to be fixed
-    public Pose2d blue_hub = new Pose2d(4.65,4.050,new Rotation2d(0));
+    public Pose2d red_hub = new Pose2d(11.917,4.03, new Rotation2d(0));///to be fixed
+    public Pose2d blue_hub = new Pose2d(4.623,4.030,new Rotation2d(0));
 
     Pose2d prevPose2d = new Pose2d();
 
@@ -390,7 +392,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         //  distance = getpose.minus(redhub).magnitude;
 
         Pose2d pose = samplePoseNow();
-        Double shooterangle = 180.0;
+        Double shooterangle = 0.0;
         if (alliance.equals(Alliance.Blue)){
 
             angle_to_target = pose.relativeTo(blue_hub).getTranslation().getAngle().getMeasure().plus(Degree.of(180+shooterangle%360));
@@ -407,8 +409,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 angle_to_target = angle_to_target.minus(Degree.of(360));
         }
         
-        return angle_to_target;
+        return Degree.of(Math.pow(angle_to_target.in(Degree), 1));
     }
+
+    
+
+
 
     
 
@@ -604,7 +610,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return m_sysIdRoutineToApply.dynamic(direction);
     }
 
-
+//auto aim command?
     public Command instant_autoAim(SwerveRequest.FieldCentricFacingAngle locked){
 
         return applyRequest(()->locked.withHeadingPID(5,0, 0.01)
