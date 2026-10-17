@@ -1,0 +1,203 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L_TR_1.0"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "left approach 1, bump return"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "autointakefuelstop_trigger"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "autofeederstart"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "armwiggle"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "autoshoot"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "autohopperstart"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autohopperstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autofeederstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoshootstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autointakefuelstop_trigger"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L_TR-BMP CircuitMaker"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L_TR_1.0"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "left approach 1, bump return"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "autointakefuelstop_trigger"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "autofeederstart"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "armwiggle"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "autoshoot"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "autohopperstart"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autohopperstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autofeederstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoshootstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autointakefuelstop_trigger"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Works",
+  "choreoAuto": false
+}

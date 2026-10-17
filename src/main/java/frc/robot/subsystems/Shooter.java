@@ -57,8 +57,8 @@ public class Shooter extends SubsystemBase{
      public Distance opt_distance = Meters.of (3.1);//3.1
      public Distance max_distance = Meters.of(5.0);
     
-     public  AngularVelocity min_speed = RPM.of(3000/1.03);//3000 2800
-     public  AngularVelocity opt_speed = RPM.of(3550/1.03);//3550 3220
+     public  AngularVelocity min_speed = RPM.of(2800/1.03);//3000 2800
+     public  AngularVelocity opt_speed = RPM.of(3200/1.03);//3550 3220
      public  AngularVelocity max_speed = RPM.of(5200);//5200
 
      public AngularVelocity speed_setpoint = opt_speed;

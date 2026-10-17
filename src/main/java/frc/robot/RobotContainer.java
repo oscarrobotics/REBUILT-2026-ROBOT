@@ -60,12 +60,13 @@ private Command shootSequence(Supplier<AngularVelocity> speed) {
 
         Commands.waitSeconds(1).andThen( //time shooter windup
             Commands.startEnd(
-                () -> { hopper.startHopper(); feeder.startFeeder(); intakeRoller.startRoller(); },
-                () -> { hopper.stopHopper();  feeder.stopFeeder(); intakeRoller.stopRoller(); },
+                () -> { hopper.startHopper(); feeder.startFeeder(); intakeRoller.startRoller();},
+                () -> { hopper.stopHopper();  feeder.stopFeeder(); intakeRoller.stopRoller();},
                 hopper, feeder, intakeRoller)),//check if this works Gino!
 
         Commands.waitSeconds(0.75).andThen(
-            arm.squish_arm_command(0, 1)) // 15 rotations in, over 1.5 seconds
+            arm.auto_wiggle())
+              // 15 rotations in, over 1.5 seconds
             //Youre going to the trashcan if you dont work
     );
 }
@@ -237,7 +238,7 @@ private Command shootSequence(Supplier<AngularVelocity> speed) {
         // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        drivestick.rightBumper().onTrue(new InstantCommand(intakeRoller::toggle_roller, intakeRoller));
+        drivestick.rightBumper().onTrue(new InstantCommand(intakeRoller::toggle_roller, intakeRoller));//changed from toggle because pulley rubbing against wall and we can't put a spacer
         drivestick.rightTrigger().onTrue(new InstantCommand(intakeRoller::reverseRoller, intakeRoller)).onFalse(new InstantCommand(intakeRoller::stopRoller, intakeRoller));
 
         // Reset the field-centric heading on left bumper press.
@@ -255,15 +256,15 @@ private Command shootSequence(Supplier<AngularVelocity> speed) {
 // Left trigger: driver manual aim. Preset speed from the D-pad, left stick Y trims ±800 RPM.
 operatorstick.leftTrigger().whileTrue(shootSequence(() ->
     shooter.speed_setpoint.plus(
-        RPM.of(800).times(-MathUtil.applyDeadband(operatorstick.getLeftY(), 0.1)))));
+        RPM.of(800).times(-MathUtil.applyDeadband(operatorstick.getRightY(), 0.1)))));
 
 // Right trigger: auto aim. Distance-based speed, left stick Y trims ±800 RPM.
-operatorstick.rightTrigger().whileTrue(shootSequence(() ->
+/*eratorstick.rightTrigger().whileTrue(shootSequence(() ->
     shooter.get_auto_speed().plus(
-        RPM.of(800).times(-MathUtil.applyDeadband(operatorstick.getLeftY(), 0.1)))));
+        RPM.of(800).times(-MathUtil.applyDeadband(operatorstick.getLeftY(), 0.1)))));*/
 //PLEASE IF THERE IS A GOD, WORK!
 
-/*//Ian's shooter code, probably better(?)
+//Ian's shooter code, probably better(?)
 
 operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.StartShooter(shooter.get_auto_speed().plus(RPM.of(800).times(-operatorstick.getLeftY()))), shooter))
         ).onFalse(shooter.stopCommand());
@@ -272,7 +273,7 @@ operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -
         .whileTrue(new RepeatCommand(new InstantCommand(hopper::startHopper)))
         .whileTrue(new RepeatCommand(new InstantCommand(feeder::startFeeder)))
         .onFalse(new InstantCommand(hopper::stopHopper)).onFalse(new InstantCommand(feeder::stopFeeder));
- */
+ 
 
         operatorstick.povUp().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.close_speed;})); //near hub
         operatorstick.povDown().onTrue(new InstantCommand(()->{shooter.speed_setpoint=shooter.full_speed;})); //farthest away
@@ -302,7 +303,7 @@ operatorstick.rightTrigger().whileTrue(new RepeatCommand(new InstantCommand(() -
 //with the arm out. This fixes the sensor.
 
 
-    arm.setDefaultCommand(new InstantCommand(()->arm.active_wiggle(operatorstick.getRightY()), arm));
+    arm.setDefaultCommand(new InstantCommand(()->arm.active_wiggle(operatorstick.getLeftY()), arm));
         
 
 

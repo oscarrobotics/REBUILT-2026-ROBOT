@@ -8,7 +8,10 @@
     "middle",
     "right trench "
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "New Folder",
+    "Works"
+  ],
   "defaultMaxVel": 1.0,
   "defaultMaxAccel": 2.0,
   "defaultMaxAngVel": 400.0,

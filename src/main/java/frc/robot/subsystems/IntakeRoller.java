@@ -24,7 +24,7 @@ public class IntakeRoller extends SubsystemBase {
     private static final int k_followerId = 55;
 
     // Roller speed in rotations per second.
-    private static final double k_defaultVelocity = 90.0; // original value 70
+    private static final double k_defaultVelocity = 100; // original value 70
     private static final double k_outtakeVelocity = -80.0;
 
     private final TalonFX m_leader = new TalonFX(k_leaderId);
@@ -55,14 +55,14 @@ public class IntakeRoller extends SubsystemBase {
     private void configureMotors() {
         TalonFXConfiguration config = new TalonFXConfiguration();
 
-        config.Slot0.kS = kSEntry.getDouble(0.25);
+        config.Slot0.kS = kSEntry.getDouble(0.40);
         config.Slot0.kV = kVEntry.getDouble(0.12);
         config.Slot0.kA = kAEntry.getDouble(0.01);
         config.Slot0.kP = kPEntry.getDouble(0.11);
         config.Slot0.kI = kIEntry.getDouble(0.0);
         config.Slot0.kD = kDEntry.getDouble(0.0);
 
-        config.CurrentLimits.StatorCurrentLimit = 60.0;
+        config.CurrentLimits.StatorCurrentLimit = 70;
 
         config.MotionMagic.MotionMagicAcceleration = 100;
         config.MotionMagic.MotionMagicJerk = 1000;
@@ -89,7 +89,7 @@ public class IntakeRoller extends SubsystemBase {
     public void startRoller() {
         setVelocity(k_defaultVelocity);
     }
-
+    
     public void stopRoller() {
         setVelocity(0);
     }

@@ -29,7 +29,7 @@ public class Arm extends SubsystemBase {
 
     // Arm travel (motor rotations).
     private final Angle arm_start = Rotations.of(1.39);
-    private final Angle arm_end = Rotations.of(54); // 57.917-3
+    private final Angle arm_end = Rotations.of(56); // 57.917-3
     private final Angle arm_delta = arm_end.minus(arm_start);
 
     private final TalonFX m_motor = new TalonFX(k_motorId);

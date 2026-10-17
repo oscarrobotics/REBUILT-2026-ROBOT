@@ -3,44 +3,49 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.735,
-        "y": 0.616
+        "x": 3.7188612099644134,
+        "y": 0.6189561091340454
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.9838738681484878,
-        "y": 0.5922977268429995
+        "x": 3.9677350781129013,
+        "y": 0.595253835977045
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.979294871794872,
-        "y": 1.0232948717948727
+        "x": 7.678244365361804,
+        "y": 0.9524911032028467
       },
       "prevControl": {
-        "x": 8.163849154746423,
-        "y": 0.7384265279583884
+        "x": 7.862798648313355,
+        "y": 0.6676227593663624
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "1"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "extendintakearm_trigger",
-      "waypointRelativePos": 0.26135105204872927,
+      "name": "autointakefuel_trigger",
+      "waypointRelativePos": 0.21147356580427829,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "autointakefuel_trigger",
-      "waypointRelativePos": 0.3477297895902525,
+      "name": "extendintakearm_trigger",
+      "waypointRelativePos": 0.2902137232845895,
       "endWaypointRelativePos": null,
       "command": null
     }

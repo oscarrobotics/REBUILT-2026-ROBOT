@@ -5,16 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "right approch 1 "
-                }
-              }
-            ]
+            "pathName": "right approach 1"
           }
         },
         {
@@ -24,34 +17,21 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "right return 1"
-                }
-              }
-            ]
+            "pathName": "Right Trench - Right Bump"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.2
+            "waitTime": 2.0
           }
         },
         {
           "type": "sequential",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "auto_aim"
-                }
-              },
               {
                 "type": "named",
                 "data": {
@@ -61,13 +41,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "autofeederstart"
+                  "name": "autohopperstart"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "autohopperstart"
+                  "name": "autofeederstart"
                 }
               },
               {
@@ -85,12 +65,6 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "autoshootstop"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "autofeederstop"
                 }
               },
@@ -98,6 +72,12 @@
                 "type": "named",
                 "data": {
                   "name": "autohopperstop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoshootstop"
                 }
               }
             ]
@@ -107,6 +87,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Works",
   "choreoAuto": false
 }

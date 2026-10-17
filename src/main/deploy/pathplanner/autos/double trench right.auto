@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "right approch 1 "
+                  "pathName": "right approach 1"
                 }
               },
               {
@@ -168,6 +168,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "New Folder",
   "choreoAuto": false
 }
