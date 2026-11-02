@@ -154,6 +154,23 @@ private Command shootSequence(Supplier<AngularVelocity> speed) {
                     
         //             )
         // );
+
+//------------------------------------------------------------------
+
+// Hold A: auto-range and auto-aim at the goal. If no tag is visible, you keep manual control.
+drivestick.a().whileTrue(drivetrain.applyRequest(() -> {
+    boolean seen = vision.hasGoalTarget();
+    return testdrive
+        .withVelocityX(seen ? vision.getRangeVelocityX() : -drivestick.getLeftY() * MaxSpeed * 0.5)
+        .withVelocityY(-drivestick.getLeftX() * MaxSpeed * 0.5)   // driver can still strafe
+        .withRotationalRate(seen ? vision.getAimRotationRate()
+                                 : -drivestick.getRightX() * MaxAngularRate);
+}));
+
+//------------------------------------------------------------------
+
+
+
         drivestick.b().toggleOnTrue(drivetrain.applyRequest(() ->
                 locked_drive.withVelocityX(-drivestick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-drivestick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
